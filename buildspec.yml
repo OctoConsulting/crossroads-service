@@ -4,18 +4,23 @@ phases:
   install:
     commands:
       # Upgrade AWS CLI to the latest version
-      - pip install --upgrade awscli
+      #- pip install --upgrade awscli
   pre_build:
     commands:
-      - mvn clean compile test
+      - echo Maven compilation started on `date`
+      - mvn clean compile
+      - echo Unit tests started on `date`
+      - mvn test
   build:
     commands:
+      - echo War packaging started on `date`
       - mvn war:exploded
   post_build:
     commands:
-      - cp -r .ebextensions/ target/ROOT/
-      - aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template-file template-export.yml
+      - echo Entering post_build phase...
+      - echo Build completed on `date`
+      - mv target/ROOT .
 artifacts:
   type: zip
-  files:
-    - 'template-export.yml'
+  files: 
+    - 'ROOT/**/*'

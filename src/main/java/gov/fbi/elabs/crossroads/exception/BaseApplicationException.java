@@ -3,14 +3,15 @@ package gov.fbi.elabs.crossroads.exception;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 public class BaseApplicationException extends Exception{
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final static Logger logger = org.apache.log4j.Logger.getLogger(BaseApplicationException.class);
+	private final static Logger logger = LoggerFactory.getLogger(BaseApplicationException.class);
 	
 	String errorMessage;
 	

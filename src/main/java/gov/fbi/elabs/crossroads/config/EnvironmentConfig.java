@@ -1,9 +1,6 @@
 package gov.fbi.elabs.crossroads.config;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
@@ -24,8 +21,8 @@ public class EnvironmentConfig  implements EnvironmentAware {
             return null;
     }
     
-    @Bean
-	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf) {
-		return hemf.getSessionFactory();
-	}
+//    @Bean
+//	public SessionFactory sessionFactory(HibernateEntityManagerFactory hemf) {
+//		return hemf.getSessionFactory();
+//	}
 }

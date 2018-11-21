@@ -21,17 +21,13 @@ public class LocationController {
 	
 //	@Autowired
 //	private LocationService locationService;
-//	
-//	@RequestMapping(method = RequestMethod.GET)
-//    @ApiOperation(value = "Fetch all workflow")
-//	public List<Location> getAllLocations() throws BaseApplicationException{
-//		return locationService.getAllLocations();
-//	}
 	
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Fetch all workflow")
 	public ResponseEntity<String> test() throws BaseApplicationException{
-		return new ResponseEntity<String>("Works",HttpStatus.OK);
-	}
+	return new ResponseEntity<String>("Works",HttpStatus.OK);
+}
+	
+	
 	
 }

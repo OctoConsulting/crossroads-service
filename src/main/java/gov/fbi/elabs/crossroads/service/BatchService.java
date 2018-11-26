@@ -8,20 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gov.fbi.elabs.crossroads.domain.Workflow;
+import gov.fbi.elabs.crossroads.domain.Batch;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
-import gov.fbi.elabs.crossroads.repository.WorkflowRepository;
+import gov.fbi.elabs.crossroads.repository.BatchRepository;
 
 @Service
 @Transactional
-public class WorkflowService {
-	
+public class BatchService {
+
 	@Autowired
-	private WorkflowRepository workflowRepository;
-	
-	private static final Logger logger = LoggerFactory.getLogger(WorkflowService.class);
-	
-	public List<Workflow> getAllWorkflow() throws BaseApplicationException{
-		return workflowRepository.getAllWorkFlows();
+	private BatchRepository batchRepo;
+
+	private static final Logger logger = LoggerFactory.getLogger(BatchService.class);
+
+	public List<Batch> getBatchDetails() throws BaseApplicationException {
+		return batchRepo.getBatchDetails(63718, 1560);
 	}
+
 }

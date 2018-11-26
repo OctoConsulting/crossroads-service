@@ -11,29 +11,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public class BaseRepository<T> implements GenericRepository<T> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public T create(T t) {
 		Long seqId = (Long) getCurrentSession().save(t);
 		return (T) getCurrentSession().get(t.getClass(), seqId);
 	}
-	
+
 	@Override
 	public T update(T t, boolean flushFirst) {
 		getCurrentSession().update(t);
-		if(flushFirst){
+		if (flushFirst) {
 			getCurrentSession().flush();
-		}		
-		return t;	
+		}
+		return t;
 	}
 
 	@Override
@@ -41,24 +40,34 @@ public class BaseRepository<T> implements GenericRepository<T> {
 		getCurrentSession().delete(t);
 	}
 
-	protected Session getCurrentSession(){
-		return sessionFactory.getCurrentSession() ;
+	protected Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
 	}
-	
-	public Session openSession(){
+
+	public Session openSession() {
 		return sessionFactory.openSession();
 	}
-	
+
 	public List<T> fireQuery(String query, Class<? extends T> clazz) {
 		List<T> list = new ArrayList<>();
-		try{
+		try {
 			SQLQuery sqlQuery = getCurrentSession().createSQLQuery(query);
 			sqlQuery.addEntity(clazz);
 			return sqlQuery.list();
-		}catch(Exception e){	
-			logger.error("Error occured while firing querty ",e);
+		} catch (Exception e) {
+			logger.error("Error occured while firing querty ", e);
 			return list;
 		}
 	}
-	
+
+	public SQLQuery createSQLQuery(String query) {
+		try {
+			SQLQuery sqlQuery = getCurrentSession().createSQLQuery(query);
+			return sqlQuery;
+		} catch (Exception e) {
+			logger.error("Error occured while firing querty ", e);
+			return null;
+		}
+	}
+
 }

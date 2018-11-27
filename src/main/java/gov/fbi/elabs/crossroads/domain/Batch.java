@@ -2,13 +2,15 @@ package gov.fbi.elabs.crossroads.domain;
 
 import java.sql.Timestamp;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import gov.fbi.elabs.crossroads.utilities.CustomTimestampDeserializer;
 import gov.fbi.elabs.crossroads.utilities.CustomTimestampSerializer;
 
-public class Batch {
+public class Batch extends ResourceSupport {
 
 	private Integer batchId;
 

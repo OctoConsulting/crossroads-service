@@ -2,6 +2,7 @@ package gov.fbi.elabs.crossroads.repository;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
@@ -19,13 +20,21 @@ public class BatchRepository extends BaseRepository<Batch> {
 
 	private static final Logger logger = LoggerFactory.getLogger(BatchRepository.class);
 
-	public List<Batch> getBatchDetails(Integer employeeId, Integer days) throws BaseApplicationException {
+	public List<Batch> getBatchDetails(Integer employeeId, Integer days, String query, String orderBy, String sortBy,
+			int offset, int limit) throws BaseApplicationException {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Select BatchId as batchId, EmployeeId as employeeId, Name as batchName,");
 		builder.append(" (Select count(*) from BatchEvidence where BatchID = b.BatchID) as evidenceCount,");
 		builder.append(" (Select DATEADD(day, " + days + ",b.CreatedDate)) as expires");
 		builder.append(" from Batch b where EmployeeID = " + employeeId + " and ");
 		builder.append(" CreatedDate > (Select DATEADD(day," + -days + ",GETDATE()))");
+
+		if (StringUtils.isNotEmpty(query)) {
+			builder.append(" and Name like \'" + query + "\'");
+		}
+
+		builder.append(" ORDER BY " + orderBy + " " + sortBy);
+		builder.append(" OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY");
 
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());
 

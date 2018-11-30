@@ -19,25 +19,25 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping(value = CRSController.BasePath+"/v1/location")
+@RequestMapping(value = CRSController.BasePath + "/v1/location", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Location", description = "Location Operations")
 public class LocationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
-	
+
 	@Autowired
 	private LocationService locationService;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Fetch all workflow")
-	public List<Location> getAllLocations() throws BaseApplicationException{
+	@ApiOperation(value = "Fetch all workflow")
+	public List<Location> getAllLocations() throws BaseApplicationException {
 		return locationService.getAllLocations();
 	}
-	
+
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
-    @ApiOperation(value = "Fetch all workflow")
-	public ResponseEntity<String> test() throws BaseApplicationException{
-		return new ResponseEntity<String>("Works",HttpStatus.OK);
+	@ApiOperation(value = "Fetch all workflow")
+	public ResponseEntity<String> test() throws BaseApplicationException {
+		return new ResponseEntity<String>("Works", HttpStatus.OK);
 	}
-	
+
 }

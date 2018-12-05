@@ -38,7 +38,7 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		builder.append("LEFT JOIN Evidence e ");
 		builder.append(
 				"ON b.FSLabNum = e.FSLabNum and b.EvidenceType = e.EvidenceType and b.EvidenceID = e.EvidenceID ");
-		builder.append("where BatchID = " + batchId);
+		builder.append("where es.ParentId is null and BatchID = " + batchId);
 
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());
 

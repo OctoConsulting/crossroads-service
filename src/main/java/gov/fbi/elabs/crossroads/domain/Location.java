@@ -8,62 +8,64 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.hateoas.ResourceSupport;
+
 @Entity
-@Table(name="Location")
-public class Location {
-	
+@Table(name = "Location")
+public class Location extends ResourceSupport {
+
 	@Id
 	@Column(name = "LocationID")
 	private Integer locationId;
-	
+
 	@Column(name = "LocationCode")
 	private String locationCode;
-	
+
 	@Column(name = "LocationName")
 	private String locationName;
-	
+
 	@Column(name = "LocationTypeID")
 	private Integer locationTypeId;
-	
+
 	@Column(name = "AddressID")
 	private Integer addressId;
-	
+
 	@Column(name = "FSLabYear")
 	private Integer fsLabYear;
-	
+
 	@Column(name = "FSLabNum")
 	private Integer fsLabNum;
-	
+
 	@Column(name = "ServerName")
 	private String serverName;
-	
+
 	@Column(name = "Url")
 	private String url;
-	
+
 	@Column(name = "WebServiceUrl")
 	private String webServiceUrl;
-	
+
 	@Column(name = "Options")
 	private Integer options;
-	
+
 	@Column(name = "CreatedBy")
 	private String createdBy;
-	
+
 	@Column(name = "CreatedDate")
 	private Timestamp createdDate;
-	
+
 	@Column(name = "LastModifiedBy")
 	private String lastModifiedBy;
-	
+
 	@Column(name = "LastModifiedDate")
 	private Timestamp lastModifiedDate;
-	
+
 	@Column(name = "IsActive")
 	private boolean isActive;
-	
+
 	@Column(name = "guid")
 	private UUID guid;
-	
+
 	@Column(name = "AgencyId")
 	private Integer agencyId;
 
@@ -75,7 +77,8 @@ public class Location {
 	}
 
 	/**
-	 * @param locationId the locationId to set
+	 * @param locationId
+	 *            the locationId to set
 	 */
 	public void setLocationId(Integer locationId) {
 		this.locationId = locationId;
@@ -89,7 +92,8 @@ public class Location {
 	}
 
 	/**
-	 * @param locationCode the locationCode to set
+	 * @param locationCode
+	 *            the locationCode to set
 	 */
 	public void setLocationCode(String locationCode) {
 		this.locationCode = locationCode;
@@ -103,7 +107,8 @@ public class Location {
 	}
 
 	/**
-	 * @param locationName the locationName to set
+	 * @param locationName
+	 *            the locationName to set
 	 */
 	public void setLocationName(String locationName) {
 		this.locationName = locationName;
@@ -117,7 +122,8 @@ public class Location {
 	}
 
 	/**
-	 * @param locationTypeId the locationTypeId to set
+	 * @param locationTypeId
+	 *            the locationTypeId to set
 	 */
 	public void setLocationTypeId(Integer locationTypeId) {
 		this.locationTypeId = locationTypeId;
@@ -131,7 +137,8 @@ public class Location {
 	}
 
 	/**
-	 * @param addressId the addressId to set
+	 * @param addressId
+	 *            the addressId to set
 	 */
 	public void setAddressId(Integer addressId) {
 		this.addressId = addressId;
@@ -145,7 +152,8 @@ public class Location {
 	}
 
 	/**
-	 * @param fsLabYear the fsLabYear to set
+	 * @param fsLabYear
+	 *            the fsLabYear to set
 	 */
 	public void setFsLabYear(Integer fsLabYear) {
 		this.fsLabYear = fsLabYear;
@@ -159,7 +167,8 @@ public class Location {
 	}
 
 	/**
-	 * @param fsLabNum the fsLabNum to set
+	 * @param fsLabNum
+	 *            the fsLabNum to set
 	 */
 	public void setFsLabNum(Integer fsLabNum) {
 		this.fsLabNum = fsLabNum;
@@ -173,7 +182,8 @@ public class Location {
 	}
 
 	/**
-	 * @param serverName the serverName to set
+	 * @param serverName
+	 *            the serverName to set
 	 */
 	public void setServerName(String serverName) {
 		this.serverName = serverName;
@@ -187,7 +197,8 @@ public class Location {
 	}
 
 	/**
-	 * @param url the url to set
+	 * @param url
+	 *            the url to set
 	 */
 	public void setUrl(String url) {
 		this.url = url;
@@ -201,7 +212,8 @@ public class Location {
 	}
 
 	/**
-	 * @param webServiceUrl the webServiceUrl to set
+	 * @param webServiceUrl
+	 *            the webServiceUrl to set
 	 */
 	public void setWebServiceUrl(String webServiceUrl) {
 		this.webServiceUrl = webServiceUrl;
@@ -215,7 +227,8 @@ public class Location {
 	}
 
 	/**
-	 * @param options the options to set
+	 * @param options
+	 *            the options to set
 	 */
 	public void setOptions(Integer options) {
 		this.options = options;
@@ -229,7 +242,8 @@ public class Location {
 	}
 
 	/**
-	 * @param createdBy the createdBy to set
+	 * @param createdBy
+	 *            the createdBy to set
 	 */
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
@@ -243,7 +257,8 @@ public class Location {
 	}
 
 	/**
-	 * @param createdDate the createdDate to set
+	 * @param createdDate
+	 *            the createdDate to set
 	 */
 	public void setCreatedDate(Timestamp createdDate) {
 		this.createdDate = createdDate;
@@ -257,7 +272,8 @@ public class Location {
 	}
 
 	/**
-	 * @param lastModifiedBy the lastModifiedBy to set
+	 * @param lastModifiedBy
+	 *            the lastModifiedBy to set
 	 */
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
@@ -271,7 +287,8 @@ public class Location {
 	}
 
 	/**
-	 * @param lastModifiedDate the lastModifiedDate to set
+	 * @param lastModifiedDate
+	 *            the lastModifiedDate to set
 	 */
 	public void setLastModifiedDate(Timestamp lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
@@ -285,7 +302,8 @@ public class Location {
 	}
 
 	/**
-	 * @param isActive the isActive to set
+	 * @param isActive
+	 *            the isActive to set
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
@@ -299,7 +317,8 @@ public class Location {
 	}
 
 	/**
-	 * @param guid the guid to set
+	 * @param guid
+	 *            the guid to set
 	 */
 	public void setGuid(UUID guid) {
 		this.guid = guid;
@@ -313,11 +332,11 @@ public class Location {
 	}
 
 	/**
-	 * @param agencyId the agencyId to set
+	 * @param agencyId
+	 *            the agencyId to set
 	 */
 	public void setAgencyId(Integer agencyId) {
 		this.agencyId = agencyId;
 	}
-	
-	
+
 }

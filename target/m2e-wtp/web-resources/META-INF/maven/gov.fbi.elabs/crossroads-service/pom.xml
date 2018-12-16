@@ -37,6 +37,43 @@
 	</properties>
 
     <dependencies>
+    
+		 <dependency>
+		    <groupId>org.springframework.session</groupId>
+		    <artifactId>spring-session</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+		</dependency>
+			
+		<dependency>
+		  <groupId>com.hazelcast</groupId>
+		  <artifactId>hazelcast-spring</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+	
+        <dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-security</artifactId>
+			<version>1.2.0.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-ldap</artifactId>
+		</dependency>
+		
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -109,6 +146,12 @@
             <artifactId>clamav-client</artifactId>
             <version>1.0.0</version>
         </dependency> -->
+        
+        <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-core</artifactId>
+	    
+	</dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
@@ -227,24 +270,5 @@
 		<finalName>ROOT</finalName>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>artifactory</id>
-			<url>https://artifactory.helix.gsa.gov/artifactory/GS-IAE-Maven/</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>artifactory</id>
-			<url>https://artifactory.helix.gsa.gov/artifactory/GS-IAE-Maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
-
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>http://nexus.reisys.com:8081/nexus/content/repositories/releases</url>
-        </repository>
-    </distributionManagement>
+	
 </project>

@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.domain.Location;
+import gov.fbi.elabs.crossroads.domain.Organization;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.service.LocationService;
+import gov.fbi.elabs.crossroads.service.OrganizationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -35,6 +37,9 @@ public class LocationController {
 
 	@Autowired
 	private LocationService locationService;
+
+	@Autowired
+	private OrganizationService organizationService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ApiOperation(value = "Fetch all workflow")
@@ -66,4 +71,31 @@ public class LocationController {
 
 	}
 
+	@RequestMapping(value = "/AtUnit", method = RequestMethod.GET)
+	@ApiOperation(value = "Fetch At Unit information for the ")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "employeeId", value = "Provide employeeId performing the transfer", dataType = "int", paramType = "query", required = true),
+			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
+			@ApiImplicitParam(name = "locationId", value = "Provide locationId(Atlab id) selected", dataType = "int", paramType = "query", required = true) })
+	public ResponseEntity<Resources<Organization>> getAtUnitInfo(
+			@RequestParam(value = "employeeId", required = true) Integer employeeId,
+			@RequestParam(value = "locationId", required = true) Integer locationId,
+			@RequestParam(value = "status", required = true, defaultValue = "Everything") String status)
+			throws BaseApplicationException {
+
+		List<Organization> orgs = organizationService.getAtUnitInfo(locationId, employeeId);
+		int res = orgs != null ? orgs.size() : 0;
+		logger.info("No Of Orgs returned " + res);
+
+		for (Organization org : orgs) {
+			org.add(linkTo(methodOn(LocationController.class).getAtUnitInfo(employeeId, locationId, status))
+					.withSelfRel());
+		}
+
+		Link selfLink = linkTo(methodOn(LocationController.class).getAtUnitInfo(employeeId, locationId, status))
+				.withSelfRel();
+		Resources<Organization> orgResources = new Resources<>(orgs, selfLink);
+		return new ResponseEntity<Resources<Organization>>(orgResources, HttpStatus.OK);
+
+	}
 }

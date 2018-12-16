@@ -51,4 +51,20 @@ public class BatchRepository extends BaseRepository<Batch> {
 		return batchList;
 	}
 
+	public int getBatchDetailsCount(Integer employeeId, Integer days, String query) throws BaseApplicationException {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("Select count(*) from Batch b where EmployeeID = " + employeeId + " and ");
+		builder.append(" CreatedDate > (Select DATEADD(day," + -days + ",GETDATE()))");
+		if (StringUtils.isNotEmpty(query)) {
+			builder.append(" and Name like \'" + query + "\'");
+		}
+
+		SQLQuery sqlQuery = createSQLQuery(builder.toString());
+
+		int total = (int) sqlQuery.list().get(0);
+		logger.info("Total Results " + total);
+		return total;
+	}
+
 }

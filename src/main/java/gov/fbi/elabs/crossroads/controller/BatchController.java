@@ -67,7 +67,7 @@ public class BatchController {
 
 		Link selfLink = linkTo(methodOn(BatchController.class).getBatchDetails(employeeId, days, searchTerm, orderBy,
 				sortBy, pageNum, limit)).withSelfRel();
-		logger.info("No of batches returned " + results);
+		logger.info("No of batches returned  " + results);
 		Resources<Batch> batchResources = new Resources<>(batchList, selfLink);
 		return new ResponseEntity<Resources<Batch>>(batchResources, HttpStatus.OK);
 	}

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.fbi.elabs.crossroads.domain.Batch;
-import gov.fbi.elabs.crossroads.domain.BatchDetails;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.repository.BatchRepository;
 import gov.fbi.elabs.crossroads.utilities.Constants;
@@ -24,7 +23,7 @@ public class BatchService {
 
 	private static final Logger logger = LoggerFactory.getLogger(BatchService.class);
 
-	public BatchDetails getBatchDetails(int employeeId, int days, String query, String orderBy, String sortBy,
+	public List<Batch> getBatchDetails(int employeeId, int days, String query, String orderBy, String sortBy,
 			int pageNum, int limit) throws BaseApplicationException {
 
 		if (StringUtils.isNotEmpty(query)) {
@@ -45,16 +44,11 @@ public class BatchService {
 
 		int offset = (pageNum - 1) * limit;
 
-		BatchDetails details = new BatchDetails();
 		List<Batch> batchList = batchRepo.getBatchDetails(employeeId, days, query, orderBy, sortBy, offset, limit);
-		int totalCount = batchRepo.getBatchDetailsCount(employeeId, days, query);
-		details.setBatchList(batchList);
-		details.setTotalCount(totalCount);
-
 		int results = batchList != null ? batchList.size() : 0;
 
 		logger.info("No of Batches returned " + results);
-		return details;
+		return batchList;
 	}
 
 }

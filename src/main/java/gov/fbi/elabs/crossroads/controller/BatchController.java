@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.domain.Batch;
-import gov.fbi.elabs.crossroads.domain.BatchDetails;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.service.BatchService;
 import io.swagger.annotations.Api;
@@ -47,7 +46,7 @@ public class BatchController {
 			@ApiImplicitParam(name = "sortBy", value = "Sort by either ASC or DESC", dataType = "string", paramType = "query", defaultValue = "ASC", allowableValues = "ASC,DESC"),
 			@ApiImplicitParam(name = "pageNum", value = "Provide Page Number", dataType = "int", paramType = "query", defaultValue = "1"),
 			@ApiImplicitParam(name = "limit", value = "Provide No. of results in a payload", dataType = "int", paramType = "query", defaultValue = "10") })
-	public ResponseEntity<Resource<BatchDetails>> getBatchDetails(
+	public ResponseEntity<Resources<Batch>> getBatchDetails(
 			@RequestParam(value = "employeeId", required = true) Integer employeeId,
 			@RequestParam(value = "days", required = true) Integer days,
 			@RequestParam(value = "searchTerm", required = false) String searchTerm,
@@ -57,10 +56,9 @@ public class BatchController {
 			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit)
 			throws BaseApplicationException {
 
-		BatchDetails details = batchService.getBatchDetails(employeeId, days, searchTerm, orderBy, sortBy, pageNum,
+		List<Batch> batchList = batchService.getBatchDetails(employeeId, days, searchTerm, orderBy, sortBy, pageNum,
 				limit);
 
-		List<Batch> batchList = details.getBatchList();
 		int results = batchList != null ? batchList.size() : 0;
 		for (Batch batch : batchList) {
 			batch.add(linkTo(methodOn(BatchController.class).getBatchDetails(employeeId, days, searchTerm, orderBy,
@@ -70,8 +68,8 @@ public class BatchController {
 		Link selfLink = linkTo(methodOn(BatchController.class).getBatchDetails(employeeId, days, searchTerm, orderBy,
 				sortBy, pageNum, limit)).withSelfRel();
 		logger.info("No of batches returned " + results);
-		Resource<BatchDetails> batchResources = new Resource<BatchDetails>(details, selfLink);
-		return new ResponseEntity<Resource<BatchDetails>>(batchResources, HttpStatus.OK);
+		Resources<Batch> batchResources = new Resources<>(batchList, selfLink);
+		return new ResponseEntity<Resources<Batch>>(batchResources, HttpStatus.OK);
 	}
 
 }

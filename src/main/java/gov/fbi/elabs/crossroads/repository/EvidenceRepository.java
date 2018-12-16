@@ -29,7 +29,7 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		builder.append("es.ParentId as parentId, ");
 		builder.append("e.Description as description, ");
 		builder.append(
-				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
+				"(select StorageLocationDescription from StorageLocation where StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
 				"(select EvidenceStatusDescription from EvidenceStatus where EvidenceStatusCode = e.EvidenceStatusCode) as status ");
 		builder.append("from BatchEvidence b LEFT JOIN EvidenceSubmission es ");
@@ -68,7 +68,7 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		builder.append("es.ParentId as parentId, ");
 		builder.append("e.Description as description, ");
 		builder.append(
-				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
+				"(select StorageLocationDescription from StorageLocation where StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
 				"(select EvidenceStatusDescription from EvidenceStatus where EvidenceStatusCode = e.EvidenceStatusCode) as status ");
 		builder.append("from EvidenceSubmission es ");

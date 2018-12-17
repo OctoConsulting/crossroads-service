@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.domain.Location;
+import gov.fbi.elabs.crossroads.domain.Organization;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.service.LocationService;
 import io.swagger.annotations.Api;
@@ -36,7 +37,6 @@ public class LocationController {
 	@Autowired
 	private LocationService locationService;
 
-	@RequestMapping(method = RequestMethod.GET)
 	@ApiOperation(value = "Fetch all workflow")
 	public List<Location> getAllLocations() throws BaseApplicationException {
 		return locationService.getAllLocations();
@@ -66,4 +66,30 @@ public class LocationController {
 
 	}
 
+	@RequestMapping(value = "/AtUnit", method = RequestMethod.GET)
+	@ApiOperation(value = "Fetch At Unit information for the logged in user")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "employeeId", value = "Provide employeeId performing the transfer", dataType = "int", paramType = "query", required = true),
+			@ApiImplicitParam(name = "locationId", value = "Provide locationId of the at Lab selected", dataType = "int", paramType = "query", required = true),
+			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything") })
+	public ResponseEntity<Resources<Organization>> getAtUnitInfo(
+			@RequestParam(value = "employeeId", required = true) Integer employeeId,
+			@RequestParam(value = "locationId", required = true) Integer locationId,
+			@RequestParam(value = "status", required = true) String status) throws BaseApplicationException {
+
+		List<Organization> orgList = locationService.getUnitInformation(employeeId, locationId, status);
+		int res = orgList != null ? orgList.size() : 0;
+		logger.info("No of orgs " + res);
+
+		for (Organization org : orgList) {
+			org.add(linkTo(methodOn(LocationController.class).getAtUnitInfo(employeeId, locationId, status))
+					.withSelfRel());
+		}
+
+		Link selfLink = linkTo(methodOn(LocationController.class).getAtUnitInfo(employeeId, locationId, status))
+				.withSelfRel();
+		Resources<Organization> orgsResource = new Resources<>(orgList, selfLink);
+		return new ResponseEntity<Resources<Organization>>(orgsResource, HttpStatus.OK);
+
+	}
 }

@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.fbi.elabs.crossroads.domain.Location;
+import gov.fbi.elabs.crossroads.domain.Organization;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.repository.LocationRepository;
+import gov.fbi.elabs.crossroads.repository.OrganizationRepository;
 import gov.fbi.elabs.crossroads.utilities.Constants;
 
 @Service
@@ -21,6 +23,9 @@ public class LocationService {
 
 	@Autowired
 	private LocationRepository locationRepository;
+
+	@Autowired
+	private OrganizationRepository organizationRepository;
 
 	public List<Location> getAllLocations() throws BaseApplicationException {
 		return locationRepository.getAllLocations();
@@ -41,6 +46,23 @@ public class LocationService {
 		logger.info("No of locations returned " + res);
 		return locList;
 
+	}
+
+	public List<Organization> getUnitInformation(Integer employeeId, Integer locationId, String status)
+			throws BaseApplicationException {
+
+		if (Constants.ACTIVE.equalsIgnoreCase(status)) {
+			status = Constants.ACTIVE;
+		} else if (Constants.INACTIVE.equalsIgnoreCase(status)) {
+			status = Constants.INACTIVE;
+		} else {
+			status = Constants.EVERYTHING;
+		}
+
+		List<Organization> orgList = organizationRepository.getAtUnitDetails(locationId, employeeId, status);
+		int res = orgList != null ? orgList.size() : 0;
+		logger.info("No of orgs " + res);
+		return orgList;
 	}
 
 }

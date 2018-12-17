@@ -2,7 +2,9 @@ package gov.fbi.elabs.crossroads.ldap;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -20,10 +22,9 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.session.hazelcast.HazelcastSessionRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
 
 @Component
-public class LDAPAuthenticationFilter extends GenericFilterBean {
+public class LDAPAuthenticationFilter implements Filter {
 
 	@Value("${ldap.base}")
 	private String base;
@@ -120,6 +121,12 @@ public class LDAPAuthenticationFilter extends GenericFilterBean {
 
 	@Override
 	public void destroy() {
+	}
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

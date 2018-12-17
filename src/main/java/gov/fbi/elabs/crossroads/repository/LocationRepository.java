@@ -32,9 +32,9 @@ public class LocationRepository extends BaseRepository<Location> {
 		builder.append(" and EmployeeID = " + employeeId);
 
 		if (Constants.ACTIVE.equalsIgnoreCase(status)) {
-			builder.append("and l.IsActive = 1");
+			builder.append(" and l.IsActive = 1");
 		} else if (Constants.INACTIVE.equalsIgnoreCase(status)) {
-			builder.append("and l.IsActive = 0");
+			builder.append(" and l.IsActive = 0");
 		}
 
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());

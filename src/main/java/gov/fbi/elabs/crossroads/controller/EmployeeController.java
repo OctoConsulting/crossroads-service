@@ -40,27 +40,33 @@ public class EmployeeController {
 	@ApiOperation(value = "Fetch Employee Details either by ids or emailIds")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "ids", value = "Provide Employee ids", dataType = "string", paramType = "query"),
-			@ApiImplicitParam(name = "emailIds", value = "Provide email ids to be retrieved", dataType = "string", paramType = "query") })
+			@ApiImplicitParam(name = "exceptIds", value = "Provide Employee already selected as witness", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "emailIds", value = "Provide email ids to be retrieved", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything") })
 	public ResponseEntity<Resources<Employee>> getEmployeeDetails(
 			@RequestParam(value = "ids", required = false) String ids,
-			@RequestParam(value = "emailIds", required = false) String emailIds) {
+			@RequestParam(value = "exceptIds", required = false) String exceptIds,
+			@RequestParam(value = "emailIds", required = false) String emailIds,
+			@RequestParam(value = "status", required = false) String status) {
 
-		if (StringUtils.isNotEmpty(ids) && StringUtils.isNotEmpty(emailIds)) {
+		if ((StringUtils.isNotEmpty(ids) && StringUtils.isNotEmpty(emailIds))
+				|| (StringUtils.isNotEmpty(ids) && StringUtils.isNotEmpty(exceptIds))
+				|| (StringUtils.isNotEmpty(emailIds) && StringUtils.isNotEmpty(exceptIds))) {
 			logger.error("ids " + ids + " status");
 			return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
 		}
 
-		List<Employee> employeeList = employeeService.getEmployees(ids, emailIds);
+		List<Employee> employeeList = employeeService.getEmployees(ids, exceptIds, emailIds, status);
 		for (Employee employee : employeeList) {
-			employee.add(linkTo(
-					methodOn(EmployeeController.class).getEmployeeDetails(employee.getEmployeeID().toString(), null))
-							.withSelfRel().expand());
+			employee.add(
+					linkTo(methodOn(EmployeeController.class).getEmployeeDetails(employee.getEmployeeID().toString(),
+							null, null, status)).withSelfRel().expand());
 		}
 		int results = employeeList != null ? employeeList.size() : 0;
 		logger.info("No of employees returned " + results);
 
-		Link selfLink = linkTo(methodOn(EmployeeController.class).getEmployeeDetails(ids, emailIds)).withSelfRel()
-				.expand();
+		Link selfLink = linkTo(methodOn(EmployeeController.class).getEmployeeDetails(ids, exceptIds, emailIds, status))
+				.withSelfRel().expand();
 		Resources<Employee> empResources = new Resources<>(employeeList, selfLink);
 		return new ResponseEntity<Resources<Employee>>(empResources, HttpStatus.OK);
 	}

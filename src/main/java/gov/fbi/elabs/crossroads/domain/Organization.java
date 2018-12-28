@@ -1,67 +1,27 @@
 package gov.fbi.elabs.crossroads.domain;
 
-import java.sql.Timestamp;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.springframework.hateoas.ResourceSupport;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import gov.fbi.elabs.crossroads.utilities.CustomTimestampDeserializer;
-import gov.fbi.elabs.crossroads.utilities.CustomTimestampSerializer;
-
-@Entity
-@JsonInclude(Include.NON_NULL)
-@Table(name = "Organization")
 public class Organization extends ResourceSupport {
 
-	@Id
-	@Column(name = "OrganizationID")
-	private int organizationId;
+	private Integer organizationId;
 
-	@Column(name = "OrganizationCode")
 	private String organizationCode;
 
-	@Column(name = "OrganizationName")
 	private String organizationName;
 
-	@Column(name = "OrganizationTypeID")
-	private int organizationTypeId;
+	private Integer organizationTypeId;
 
-	@Column(name = "Options")
-	private int options;
+	private Integer employeeId;
 
-	@Column(name = "CreatedBy")
-	private String createdBy;
+	private Integer locationId;
 
-	@JsonSerialize(using = CustomTimestampSerializer.class)
-	@JsonDeserialize(using = CustomTimestampDeserializer.class)
-	@Column(name = "CreatedDate")
-	private Timestamp createdDate;
-
-	@Column(name = "LastModifiedBy")
-	private String lastModifiedBy;
-
-	@Column(name = "LastModifiedDate")
-	private Timestamp lastModifiedDate;
-
-	@Column(name = "IsActive")
-	private Boolean isActive;
-
-	private UUID guid;
+	private boolean isDefault;
 
 	/**
 	 * @return the organizationId
 	 */
-	public int getOrganizationId() {
+	public Integer getOrganizationId() {
 		return organizationId;
 	}
 
@@ -69,7 +29,7 @@ public class Organization extends ResourceSupport {
 	 * @param organizationId
 	 *            the organizationId to set
 	 */
-	public void setOrganizationId(int organizationId) {
+	public void setOrganizationId(Integer organizationId) {
 		this.organizationId = organizationId;
 	}
 
@@ -106,7 +66,7 @@ public class Organization extends ResourceSupport {
 	/**
 	 * @return the organizationTypeId
 	 */
-	public int getOrganizationTypeId() {
+	public Integer getOrganizationTypeId() {
 		return organizationTypeId;
 	}
 
@@ -114,113 +74,53 @@ public class Organization extends ResourceSupport {
 	 * @param organizationTypeId
 	 *            the organizationTypeId to set
 	 */
-	public void setOrganizationTypeId(int organizationTypeId) {
+	public void setOrganizationTypeId(Integer organizationTypeId) {
 		this.organizationTypeId = organizationTypeId;
 	}
 
 	/**
-	 * @return the options
+	 * @return the employeeId
 	 */
-	public int getOptions() {
-		return options;
+	public Integer getEmployeeId() {
+		return employeeId;
 	}
 
 	/**
-	 * @param options
-	 *            the options to set
+	 * @param employeeId
+	 *            the employeeId to set
 	 */
-	public void setOptions(int options) {
-		this.options = options;
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
 	}
 
 	/**
-	 * @return the createdBy
+	 * @return the locationId
 	 */
-	public String getCreatedBy() {
-		return createdBy;
+	public Integer getLocationId() {
+		return locationId;
 	}
 
 	/**
-	 * @param createdBy
-	 *            the createdBy to set
+	 * @param locationId
+	 *            the locationId to set
 	 */
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
 	}
 
 	/**
-	 * @return the createdDate
+	 * @return the isDefault
 	 */
-	public Timestamp getCreatedDate() {
-		return createdDate;
+	public boolean isDefault() {
+		return isDefault;
 	}
 
 	/**
-	 * @param createdDate
-	 *            the createdDate to set
+	 * @param isDefault
+	 *            the isDefault to set
 	 */
-	public void setCreatedDate(Timestamp createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	/**
-	 * @return the lastModifiedBy
-	 */
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	/**
-	 * @param lastModifiedBy
-	 *            the lastModifiedBy to set
-	 */
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	/**
-	 * @return the lastModifiedDate
-	 */
-	public Timestamp getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	/**
-	 * @param lastModifiedDate
-	 *            the lastModifiedDate to set
-	 */
-	public void setLastModifiedDate(Timestamp lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	/**
-	 * @return the isActive
-	 */
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	/**
-	 * @param isActive
-	 *            the isActive to set
-	 */
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	/**
-	 * @return the guid
-	 */
-	public UUID getGuid() {
-		return guid;
-	}
-
-	/**
-	 * @param guid
-	 *            the guid to set
-	 */
-	public void setGuid(UUID guid) {
-		this.guid = guid;
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.hateoas.ResourceSupport;
 
@@ -68,6 +69,9 @@ public class Location extends ResourceSupport {
 
 	@Column(name = "AgencyId")
 	private Integer agencyId;
+
+	@Transient
+	private Boolean isDefault;
 
 	/**
 	 * @return the locationId
@@ -337,6 +341,21 @@ public class Location extends ResourceSupport {
 	 */
 	public void setAgencyId(Integer agencyId) {
 		this.agencyId = agencyId;
+	}
+
+	/**
+	 * @return the isDefault
+	 */
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	/**
+	 * @param isDefault
+	 *            the isDefault to set
+	 */
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 }

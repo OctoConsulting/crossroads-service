@@ -39,20 +39,48 @@ public class EvidenceController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ApiOperation(value = "Fetch Evidence Details for Batch Id")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "batchId", value = "Provide Batch id for which evidences to be retrieved", dataType = "int", paramType = "query", required = true) })
+			@ApiImplicitParam(name = "batchId", value = "Provide Batch id for which evidences to be retrieved", dataType = "int", paramType = "query", required = true),
+			@ApiImplicitParam(name = "hierarchy", value = "Provide true if hierarchy results to be returned too", dataType = "boolean", paramType = "query", required = true, allowableValues = "true,false") })
 	public ResponseEntity<Resources<Evidence>> getEvidenceForBatch(
-			@RequestParam(value = "batchId", required = true) Integer batchId) throws BaseApplicationException {
-		List<Evidence> evidenceList = evidenceService.getEvidenceListForBatch(batchId);
+			@RequestParam(value = "batchId", required = true) Integer batchId,
+			@RequestParam(value = "hierarchy", required = true) Boolean hierarchy) throws BaseApplicationException {
+		List<Evidence> evidenceList = evidenceService.getEvidenceListForBatch(batchId, hierarchy);
 		int results = evidenceList != null ? evidenceList.size() : 0;
 
 		for (Evidence evidence : evidenceList) {
-			evidence.add(linkTo(methodOn(EvidenceController.class).getEvidenceForBatch(batchId)).withSelfRel());
+			evidence.add(
+					linkTo(methodOn(EvidenceController.class).getEvidenceForBatch(batchId, hierarchy)).withSelfRel());
 		}
 
-		Link selfLink = linkTo(methodOn(EvidenceController.class).getEvidenceForBatch(batchId)).withSelfRel();
+		Link selfLink = linkTo(methodOn(EvidenceController.class).getEvidenceForBatch(batchId, hierarchy))
+				.withSelfRel();
 		Resources<Evidence> evidenceResources = new Resources<>(evidenceList, selfLink);
 		logger.info("No of evidence Returned " + results);
 		return new ResponseEntity<Resources<Evidence>>(evidenceResources, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/hierarchy", method = RequestMethod.GET)
+	@ApiOperation(value = "Fetch Evidence Details for evidenceSubmissionId")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "evidenceSubmissionId", value = "Provide evidenceSubmissionId of the parent", dataType = "int", paramType = "query", required = true) })
+	public ResponseEntity<Resources<Evidence>> getEvidenceHierarchyDetails(
+			@RequestParam(value = "evidenceSubmissionId", required = true) Integer evidenceSubmissionId)
+			throws BaseApplicationException {
+
+		List<Evidence> evidenceList = evidenceService.getEvidenceHierarchy(evidenceSubmissionId);
+		int results = evidenceList != null ? evidenceList.size() : 0;
+
+		for (Evidence evidence : evidenceList) {
+			evidence.add(linkTo(methodOn(EvidenceController.class).getEvidenceHierarchyDetails(evidenceSubmissionId))
+					.withSelfRel());
+		}
+
+		Link selfLink = linkTo(methodOn(EvidenceController.class).getEvidenceHierarchyDetails(evidenceSubmissionId))
+				.withSelfRel();
+		Resources<Evidence> evidenceResources = new Resources<>(evidenceList, selfLink);
+		logger.info("No of evidence Returned " + results);
+		return new ResponseEntity<Resources<Evidence>>(evidenceResources, HttpStatus.OK);
+
 	}
 
 }

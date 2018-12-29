@@ -22,11 +22,13 @@ public class EvidenceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(EvidenceService.class);
 
-	public List<Evidence> getEvidenceListForBatch(Integer batchId) throws BaseApplicationException {
-		List<Evidence> evidenceList = evidenceRepository.getEvidenceList(batchId);
+	public List<Evidence> getEvidenceListForBatch(Integer batchId, Boolean hierarchy) throws BaseApplicationException {
+		List<Evidence> evidenceList = evidenceRepository.getEvidenceList(batchId, hierarchy);
 
-		for (Evidence evidence : evidenceList) {
-			createHierarchy(evidence);
+		if (hierarchy) {
+			for (Evidence evidence : evidenceList) {
+				createHierarchy(evidence);
+			}
 		}
 
 		int results = evidenceList != null ? evidenceList.size() : 0;
@@ -41,7 +43,7 @@ public class EvidenceService {
 			return;
 		}
 
-		List<Evidence> evidenceList = evidenceRepository.getEvidenceHierarchy(evidenceSubmissionId);
+		List<Evidence> evidenceList = evidenceRepository.getEvidenceHierarchy(evidenceSubmissionId, true);
 		evidence.setHierarchy(evidenceList);
 		if (CollectionUtils.isEmpty(evidenceList)) {
 			return;
@@ -50,6 +52,13 @@ public class EvidenceService {
 		for (Evidence ev : evidenceList) {
 			createHierarchy(ev);
 		}
+	}
+
+	public List<Evidence> getEvidenceHierarchy(Integer parentId) throws BaseApplicationException {
+		List<Evidence> evidenceList = evidenceRepository.getEvidenceHierarchy(parentId, false);
+		int results = evidenceList != null ? evidenceList.size() : 0;
+		logger.info("Evidences returned " + results);
+		return evidenceList;
 	}
 
 }

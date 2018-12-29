@@ -19,7 +19,7 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 
 	private static final Logger logger = LoggerFactory.getLogger(EvidenceRepository.class);
 
-	public List<Evidence> getEvidenceList(Integer batchId) throws BaseApplicationException {
+	public List<Evidence> getEvidenceList(Integer batchId, Boolean hierarchy) throws BaseApplicationException {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("select concat(b.FSLabNum, ' ', b.EvidenceType, ' ',b.EvidenceID) as evidence, ");
@@ -28,6 +28,12 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		builder.append("es.EvidenceSubmissionID as evidenceSubmissionId, ");
 		builder.append("es.ParentId as parentId, ");
 		builder.append("e.Description as description, ");
+		if (!hierarchy) {
+			builder.append(" (select count(*) from EvidenceSubmission est LEFT JOIN Evidence ev ");
+			builder.append(
+					" ON est.FSLabNum = ev.FSLabNum and est.EvidenceType = ev.EvidenceType and est.EvidenceID = ev.EvidenceID");
+			builder.append(" where ParentId = es.EvidenceSubmissionID) as hasChildren,");
+		}
 		builder.append(
 				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
@@ -50,6 +56,9 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		sqlQuery.addScalar("location", new StringType());
 		sqlQuery.addScalar("status", new StringType());
 		sqlQuery.addScalar("parentId", new IntegerType());
+		if (!hierarchy) {
+			sqlQuery.addScalar("hasChildren", new IntegerType());
+		}
 		sqlQuery.setResultTransformer(Transformers.aliasToBean(Evidence.class));
 
 		List<Evidence> evidenceList = sqlQuery.list();
@@ -59,7 +68,8 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 
 	}
 
-	public List<Evidence> getEvidenceHierarchy(Integer evidenceSubmissionId) throws BaseApplicationException {
+	public List<Evidence> getEvidenceHierarchy(Integer evidenceSubmissionId, Boolean hierarchy)
+			throws BaseApplicationException {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("select CONCAT(es.FSLabNum, ' ', es.EvidenceType, ' ', es.EvidenceID) as evidence, ");
@@ -67,6 +77,12 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		builder.append("es.EvidenceSubmissionID as evidenceSubmissionId, ");
 		builder.append("es.ParentId as parentId, ");
 		builder.append("e.Description as description, ");
+		if (!hierarchy) {
+			builder.append(" (select count(*) from EvidenceSubmission est LEFT JOIN Evidence ev ");
+			builder.append(
+					" ON est.FSLabNum = ev.FSLabNum and est.EvidenceType = ev.EvidenceType and est.EvidenceID = ev.EvidenceID");
+			builder.append(" where ParentId = es.EvidenceSubmissionID) as hasChildren,");
+		}
 		builder.append(
 				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
@@ -86,6 +102,9 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		sqlQuery.addScalar("location", new StringType());
 		sqlQuery.addScalar("status", new StringType());
 		sqlQuery.addScalar("parentId", new IntegerType());
+		if (!hierarchy) {
+			sqlQuery.addScalar("hasChildren", new IntegerType());
+		}
 
 		sqlQuery.setResultTransformer(Transformers.aliasToBean(Evidence.class));
 

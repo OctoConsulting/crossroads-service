@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gov.fbi.elabs.crossroads.domain.Employee;
 import gov.fbi.elabs.crossroads.repository.EmployeeRepository;
+import gov.fbi.elabs.crossroads.utilities.Constants;
 
 @Service
 @Transactional
@@ -62,6 +63,14 @@ public class EmployeeService {
 		int results = employeeList != null ? employeeList.size() : 0;
 		logger.info("No. of employee returned " + results);
 		return employeeList;
+	}
+
+	public Employee getEmployeeDetails(String username) {
+		String user = Constants.USERNAME_PREFIX + username;
+		Employee emp = employeeRepository.getEmployeeDetails(user);
+		int res = emp != null ? emp.getEmployeeID() : 0;
+		logger.info("Emp returned " + res);
+		return emp;
 	}
 
 }

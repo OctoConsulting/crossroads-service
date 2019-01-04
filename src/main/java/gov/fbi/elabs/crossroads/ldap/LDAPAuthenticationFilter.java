@@ -50,23 +50,34 @@ public class LDAPAuthenticationFilter implements Filter {
 
 		HttpServletRequest httpReq = ((HttpServletRequest) req);
 		HttpServletResponse httpRes = ((HttpServletResponse) res);
-		if (httpReq.getRequestURI().contains("/logout") || httpReq.getRequestURI().contains("/login")) {
+		if (httpReq.getRequestURI().contains("/logout") || httpReq.getRequestURI().contains("/login")
+				|| httpReq.getRequestURI().contains("/v1/batch") || httpReq.getRequestURI().contains("/v1/evidence")
+				|| httpReq.getRequestURI().contains("/v1/location")
+				|| httpReq.getRequestURI().contains("/v1/transferType")
+				|| httpReq.getRequestURI().contains("/v1/transferReason")
+				|| httpReq.getRequestURI().contains("/v1/custody")) {
 
 			String sessionId = (String) httpReq.getHeader("X-Auth-Token");
-			if (StringUtils.isNotEmpty(sessionId)) {
+			if (StringUtils.isNotEmpty(sessionId) && (httpReq.getRequestURI().contains("/v1/batch")
+					|| httpReq.getRequestURI().contains("/v1/evidence")
+					|| httpReq.getRequestURI().contains("/v1/location")
+					|| httpReq.getRequestURI().contains("/v1/transferType")
+					|| httpReq.getRequestURI().contains("/v1/transferReason")
+					|| httpReq.getRequestURI().contains("/v1/custody"))) {
 				String username = sessionId.split(":")[0];
 				String sessionIdTmp = sessionId.split(":")[1];
 				String uname = new String(Base64.decodeBase64(username), "utf-8");
 				System.out.println("User Name >> " + uname);
+				// EmployeeAuth empAuth =
+				// employeeAuthUtil.getEmployeeAuthDetails(uname);
 				req.setAttribute("username", uname);
-				if (sessionRepo.getSession(sessionIdTmp) != null) {
-					httpRes.setHeader("X-Auth-Token", sessionId);
-				} else {
-					httpRes.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-					return;
-				}
-			} else if (!httpReq.getRequestURI().contains("/logout") && !httpReq.getRequestURI().contains("/login")) {
-				filter.doFilter(httpReq, httpRes);
+				System.out.println(sessionRepo.getSession(sessionIdTmp));
+				// if (sessionRepo.getSession(sessionIdTmp) != null) {
+				// httpRes.setHeader("X-Auth-Token", sessionId);
+				// } else {
+				// httpRes.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+				// return;
+				// }
 			} else if (httpReq.getRequestURI().contains("/logout") && StringUtils.isNotEmpty(sessionId)) {
 				String sessionIdTmp = sessionId.split(":")[1];
 				if (StringUtils.isNotEmpty(sessionId)) {

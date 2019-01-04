@@ -48,4 +48,13 @@ public class EmployeeRepository extends BaseRepository<Employee> {
 		return employeeList;
 	}
 
+	public Employee getEmployeeDetails(String username) {
+		Criteria cr = getCurrentSession().createCriteria(Employee.class);
+		cr.add(Restrictions.eq("userName", username));
+		Employee emp = (Employee) cr.uniqueResult();
+		int res = emp != null ? emp.getEmployeeID() : 0;
+		logger.info("Employee Id returned " + res);
+		return emp;
+	}
+
 }

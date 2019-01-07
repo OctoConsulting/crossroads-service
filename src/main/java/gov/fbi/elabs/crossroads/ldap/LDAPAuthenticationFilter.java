@@ -55,7 +55,8 @@ public class LDAPAuthenticationFilter implements Filter {
 				|| httpReq.getRequestURI().contains("/v1/location")
 				|| httpReq.getRequestURI().contains("/v1/transferType")
 				|| httpReq.getRequestURI().contains("/v1/transferReason")
-				|| httpReq.getRequestURI().contains("/v1/custody")) {
+				|| httpReq.getRequestURI().contains("/v1/custody")
+				|| httpReq.getRequestURI().contains("/v1/employee")) {
 
 			String sessionId = (String) httpReq.getHeader("X-Auth-Token");
 			if (StringUtils.isNotEmpty(sessionId) && (httpReq.getRequestURI().contains("/v1/batch")
@@ -63,7 +64,8 @@ public class LDAPAuthenticationFilter implements Filter {
 					|| httpReq.getRequestURI().contains("/v1/location")
 					|| httpReq.getRequestURI().contains("/v1/transferType")
 					|| httpReq.getRequestURI().contains("/v1/transferReason")
-					|| httpReq.getRequestURI().contains("/v1/custody"))) {
+					|| httpReq.getRequestURI().contains("/v1/custody")
+					|| httpReq.getRequestURI().contains("/v1/employee"))) {
 				String username = sessionId.split(":")[0];
 				String sessionIdTmp = sessionId.split(":")[1];
 				String uname = new String(Base64.decodeBase64(username), "utf-8");

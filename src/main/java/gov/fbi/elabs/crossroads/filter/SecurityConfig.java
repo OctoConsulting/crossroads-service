@@ -1,8 +1,8 @@
 package gov.fbi.elabs.crossroads.filter;
 
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,14 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf()
 		.disable().authorizeRequests()
-		.antMatchers("/login")
-		.authenticated().and().httpBasic();
-		http.authorizeRequests().anyRequest().permitAll();
-		/*http.csrf().disable()
-		.authorizeRequests().antMatchers("/login")
-		.authenticated().antMatchers(HttpMethod.OPTIONS, "*").permitAll()
-		.and().httpBasic();
-		http.authorizeRequests().anyRequest().permitAll();*/
+		.antMatchers("/login").permitAll()
+		.anyRequest().authenticated().and().httpBasic();
 	}
 	
 	@Override

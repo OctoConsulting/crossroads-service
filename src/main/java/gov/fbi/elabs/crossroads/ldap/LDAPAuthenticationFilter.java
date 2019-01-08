@@ -58,10 +58,6 @@ public class LDAPAuthenticationFilter implements Filter {
 				|| httpReq.getRequestURI().contains("/v1/custody")
 				|| httpReq.getRequestURI().contains("/v1/employee")) {
 
-			if (httpReq.getMethod().equalsIgnoreCase("OPTIONS")) {
-				filter.doFilter(httpReq, httpRes);
-			}
-
 			String sessionId = (String) httpReq.getHeader("X-Auth-Token");
 			if (StringUtils.isNotEmpty(sessionId) && (httpReq.getRequestURI().contains("/v1/batch")
 					|| httpReq.getRequestURI().contains("/v1/evidence")

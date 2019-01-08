@@ -34,10 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.disable().authorizeRequests()
 		.antMatchers("/login")
 		.authenticated().and()
-		.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
-		.deleteCookies("JSESSIONID")
-		.invalidateHttpSession(true)
-		.and()
 		.httpBasic();
 		//http.authorizeRequests().anyRequest().permitAll();
 		/*http.csrf().disable()

@@ -1,11 +1,10 @@
 package gov.fbi.elabs.crossroads.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -16,6 +15,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,17 +55,17 @@ public class BatchController {
 			@ApiImplicitParam(name = "sortBy", value = "Sort by either ASC or DESC", dataType = "string", paramType = "query", defaultValue = "ASC", allowableValues = "ASC,DESC"),
 			@ApiImplicitParam(name = "pageNum", value = "Provide Page Number", dataType = "int", paramType = "query", defaultValue = "1"),
 			@ApiImplicitParam(name = "limit", value = "Provide No. of results in a payload", dataType = "int", paramType = "query", defaultValue = "10"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+		 })
 	public ResponseEntity<Resource<BatchDetails>> getBatchDetails(
 			@RequestParam(value = "days", required = true) Integer days,
 			@RequestParam(value = "searchTerm", required = false) String searchTerm,
 			@RequestParam(value = "orderBy", required = true, defaultValue = "Name") String orderBy,
 			@RequestParam(value = "sortBy", required = true, defaultValue = "ASC") String sortBy,
 			@RequestParam(value = "pageNum", required = true, defaultValue = "1") Integer pageNum,
-			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit,
-			HttpServletRequest request) throws BaseApplicationException {
+			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit
+			) throws BaseApplicationException {
 
-		String username = (String) request.getAttribute("username");
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
 		if (employeeAuth.getEmployeeId() == null
@@ -82,11 +82,11 @@ public class BatchController {
 		int results = batchList != null ? batchList.size() : 0;
 		for (Batch batch : batchList) {
 			batch.add(linkTo(methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy, pageNum,
-					limit, request)).withSelfRel());
+					limit)).withSelfRel());
 		}
 
 		Link selfLink = linkTo(methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy,
-				pageNum, limit, request)).withSelfRel();
+				pageNum, limit)).withSelfRel();
 		logger.info("No of batches returned " + results);
 		Resource<BatchDetails> batchResources = new Resource<>(details, selfLink);
 		return new ResponseEntity<Resource<BatchDetails>>(batchResources, HttpStatus.OK);

@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.repository.EvidenceRepository;
 import gov.fbi.elabs.crossroads.repository.EvidenceTransferRepository;
 import gov.fbi.elabs.crossroads.service.EvidenceTransferService;
-import gov.fbi.elabs.crossroads.utilities.Constants;
+import gov.fbi.elabs.crossroads.utilities.EmployeeAuthUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,20 +44,33 @@ public class EvidenceTransferController {
 	@Autowired
 	EvidenceRepository evidenceRepository;
 
+	@Autowired
+	EmployeeAuthUtil employeeAuthUtil;
+
 	@RequestMapping(value = "/v1/evidencetransfer/", method = RequestMethod.POST)
 	@ApiOperation(value = "Transfer evidence within a batch.")
-	@ApiImplicitParams({ @ApiImplicitParam(name = Constants.AUTHENTICATION_HEADER) })
-	public ResponseEntity<Object> evidenceTransfer(@RequestParam(value = "batchID", required = true) Integer batchID,
-			@RequestBody EvidenceTransferUI evidenceTransferUI, HttpServletRequest request) {
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+	public ResponseEntity evidenceTransfer(@RequestBody EvidenceTransferUI evidenceTransferUI,
+			HttpServletRequest request) {
 		logger.trace("Manage POST /transferevidence/");
-		evidenceTransferService.transferEvidence(batchID, evidenceTransferUI);
-		return new ResponseEntity<Object>(HttpStatus.OK);
+		String username = (String) request.getAttribute("username");
+		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
+
+		// if (employeeAuth.getEmployeeId() == null
+		// || !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
+		// || !employeeAuth.getTaskList().contains(Constants.CAN_VIEW_BATCH)) {
+		// return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+		// }
+		String userNameForDB = employeeAuth.getUserName();
+		evidenceTransferService.transferEvidence(employeeAuth, evidenceTransferUI);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/v1/evidencetransfer/validate", method = RequestMethod.POST)
 	@ApiOperation(value = "Validate transfer of a batch with evidence.")
-	// @ApiImplicitParams({ @ApiImplicitParam(name =
-	// Constants.AUTHENTICATION_HEADER) })
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<List<ErrorMessage>> validateEvidenceTransfer(
 			@RequestParam(value = "batchID", required = true) Integer batchID,
 			@RequestBody EvidenceTransferUI evidenceTransferUI, HttpServletRequest request)

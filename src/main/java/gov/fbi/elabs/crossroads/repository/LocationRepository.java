@@ -2,6 +2,7 @@ package gov.fbi.elabs.crossroads.repository;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
@@ -31,10 +32,10 @@ public class LocationRepository extends BaseRepository<Location> {
 		builder.append(" where el.LocationID = l.LocationID");
 		builder.append(" and EmployeeID = " + employeeId);
 
-		if (Constants.ACTIVE.equalsIgnoreCase(status)) {
-			builder.append("and l.IsActive = 1");
-		} else if (Constants.INACTIVE.equalsIgnoreCase(status)) {
-			builder.append("and l.IsActive = 0");
+		if (StringUtils.isNotEmpty(status) && Constants.ACTIVE.equalsIgnoreCase(status)) {
+			builder.append(" and l.IsActive = 1");
+		} else if (StringUtils.isNotEmpty(status) && Constants.INACTIVE.equalsIgnoreCase(status)) {
+			builder.append(" and l.IsActive = 0");
 		}
 
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());

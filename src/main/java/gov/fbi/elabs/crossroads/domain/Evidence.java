@@ -28,6 +28,8 @@ public class Evidence extends ResourceSupport {
 
 	private Integer parentId;
 
+	private Integer hasChildren;
+
 	/**
 	 * @return the evidence
 	 */
@@ -161,6 +163,21 @@ public class Evidence extends ResourceSupport {
 	 */
 	public void setBatchId(Integer batchId) {
 		this.batchId = batchId;
+	}
+
+	/**
+	 * @return the hasChildren
+	 */
+	public Integer getHasChildren() {
+		return hasChildren;
+	}
+
+	/**
+	 * @param hasChildren
+	 *            the hasChildren to set
+	 */
+	public void setHasChildren(Integer hasChildren) {
+		this.hasChildren = hasChildren;
 	}
 
 }

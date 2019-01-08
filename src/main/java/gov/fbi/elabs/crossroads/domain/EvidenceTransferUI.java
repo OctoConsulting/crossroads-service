@@ -11,7 +11,6 @@ import gov.fbi.elabs.crossroads.utilities.CustomTimestampSerializer;
 public class EvidenceTransferUI {
 
 	private Integer batchID;
-	private
 
 	private Integer employeeID;
 	private String employeeUserName;
@@ -19,13 +18,14 @@ public class EvidenceTransferUI {
 
 	private String transferType;
 
-	private String witness1ID,
-	private String witness1UserName,
-	private String witness1Pwd,
+	private Integer witness1ID;
+	private String witness1UserName;
+	private String witness1Pwd;
 
-	private String witness2ID,
-	private String witness2UserName,
-	private String witness2Pwd,
+	private Integer witness2ID;
+	private String witness2UserName;
+
+	private String witness2Pwd;
 
 	private Integer locationID;
 	private Integer organizationID;
@@ -33,7 +33,7 @@ public class EvidenceTransferUI {
 	private Boolean requiresLocation;
 
 	private Integer storageAreaID;
-	private Integer storageLocationID;
+	private String storageLocationID;
 
 	private String evidenceTransferTypeCode;
 	private Integer transferReason;
@@ -43,6 +43,102 @@ public class EvidenceTransferUI {
 	private Boolean employeeValidated;
 	private Boolean isReasonRequired;
 	private Integer requiredWitnessCount;
+
+	public Integer getBatchID() {
+		return batchID;
+	}
+
+	public void setBatchID(Integer batchID) {
+		this.batchID = batchID;
+	}
+
+	public String getEmployeeUserName() {
+		return employeeUserName;
+	}
+
+	public void setEmployeeUserName(String employeeUserName) {
+		this.employeeUserName = employeeUserName;
+	}
+
+	public String getEmployeePwd() {
+		return employeePwd;
+	}
+
+	public void setEmployeePwd(String employeePwd) {
+		this.employeePwd = employeePwd;
+	}
+
+	public Integer getWitness1ID() {
+		return witness1ID;
+	}
+
+	public void setWitness1ID(Integer witness1id) {
+		witness1ID = witness1id;
+	}
+
+	public String getWitness1UserName() {
+		return witness1UserName;
+	}
+
+	public void setWitness1UserName(String witness1UserName) {
+		this.witness1UserName = witness1UserName;
+	}
+
+	public String getWitness1Pwd() {
+		return witness1Pwd;
+	}
+
+	public void setWitness1Pwd(String witness1Pwd) {
+		this.witness1Pwd = witness1Pwd;
+	}
+
+	public Integer getWitness2ID() {
+		return witness2ID;
+	}
+
+	public void setWitness2ID(Integer witness2id) {
+		witness2ID = witness2id;
+	}
+
+	public String getWitness2UserName() {
+		return witness2UserName;
+	}
+
+	public void setWitness2UserName(String witness2UserName) {
+		this.witness2UserName = witness2UserName;
+	}
+
+	public String getWitness2Pwd() {
+		return witness2Pwd;
+	}
+
+	public void setWitness2Pwd(String witness2Pwd) {
+		this.witness2Pwd = witness2Pwd;
+	}
+
+	public Boolean getRequiresLocation() {
+		return requiresLocation;
+	}
+
+	public void setRequiresLocation(Boolean requiresLocation) {
+		this.requiresLocation = requiresLocation;
+	}
+
+	public Integer getStorageAreaID() {
+		return storageAreaID;
+	}
+
+	public void setStorageAreaID(Integer storageAreaID) {
+		this.storageAreaID = storageAreaID;
+	}
+
+	public String getStorageLocationID() {
+		return storageLocationID;
+	}
+
+	public void setStorageLocationID(String storageLocationID) {
+		this.storageLocationID = storageLocationID;
+	}
 
 	public Integer getLocationID() {
 		return locationID;
@@ -134,38 +230,6 @@ public class EvidenceTransferUI {
 
 	public void setEmployeeID(Integer employeeID) {
 		this.employeeID = employeeID;
-	}
-
-	public Integer getWitnessID1() {
-		return witnessID1;
-	}
-
-	public void setWitnessID1(Integer witnessID1) {
-		this.witnessID1 = witnessID1;
-	}
-
-	public Integer getWitnessID2() {
-		return witnessID2;
-	}
-
-	public void setWitnessID2(Integer witnessID2) {
-		this.witnessID2 = witnessID2;
-	}
-
-	public Integer getStorageArea() {
-		return storageArea;
-	}
-
-	public void setStorageArea(Integer storageArea) {
-		this.storageArea = storageArea;
-	}
-
-	public Integer getStorageLocation() {
-		return storageLocation;
-	}
-
-	public void setStorageLocation(Integer storageLocation) {
-		this.storageLocation = storageLocation;
 	}
 
 	public Integer getTransferReason() {

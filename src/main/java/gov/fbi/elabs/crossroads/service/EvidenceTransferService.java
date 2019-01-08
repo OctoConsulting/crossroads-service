@@ -3,18 +3,18 @@ package gov.fbi.elabs.crossroads.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
-import gov.fbi.elabs.crossroads.domain.EvidenceTransfer;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.repository.EvidenceRepository;
+import gov.fbi.elabs.crossroads.repository.EvidenceTransferRepository;
 import gov.fbi.elabs.crossroads.repository.StorageAreaAuthorizationRepository;
-import gov.fbi.elabs.crossroads.utilities.Constants;
 
 @Service
 @Transactional
@@ -26,59 +26,29 @@ public class EvidenceTransferService {
 	@Autowired
 	EvidenceRepository evidenceRepo;
 
-	public void transferEvidence(Integer batchID, EvidenceTransferUI evidenceTransferUI) {
-		List<EvidenceTransfer> evidenceTransferList = new ArrayList<EvidenceTransfer>();
-		// for(){
-		EvidenceTransfer evidenceTransfer = new EvidenceTransfer();
-		evidenceTransfer.setBatchID(batchID);
-		evidenceTransfer.setBatchCreationDate(evidenceTransferUI.getBatchCreationDate());
-		evidenceTransfer.setEvidenceTransferStatusCode(Constants.TRANSFER_STATUS_COMPLETE);
-		evidenceTransfer.setComments(evidenceTransferUI.getComments());
-		evidenceTransfer.setLockboxTransferID(null);
-		evidenceTransfer.setVerifiedByID(null);
-		evidenceTransfer.setBatchComments(null);
-		evidenceTransfer.setAgencyLocationId(null);
-		evidenceTransfer.setOfficerId(null);
-		// evidenceTransfer.setEmployeeID(evidenceTransferUI.getEmployeeID());
-		evidenceTransfer.setEvidenceTransferReasonID(evidenceTransferUI.getTransferReason());
-		// evidenceTransfer.setEvidenceTransferTypeCode(evidenceTransferUI.getTransferTypeID());
-		evidenceTransfer.setWitness1Id(evidenceTransferUI.getWitnessID1());
-		evidenceTransfer.setWitness2Id(evidenceTransferUI.getWitnessID2());
-		evidenceTransferList.add(evidenceTransfer);
-		// }
+	@Autowired
+	EvidenceTransferRepository evidenceTransferRepo;
 
-		// int entityCount = 50;
-		// int batchSize = 25;
-		//
-		// EntityManager entityManager = entityManagerFactory().createEntityManager();
-		//
-		// EntityTransaction entityTransaction = entityManager.getTransaction();
-		//
-		// try {
-		// entityTransaction.begin();
-		//
-		// for (int i = 0; i < entityCount; i++) {
-		// if (i > 0 && i % batchSize == 0) {
-		// entityTransaction.commit();
-		// entityTransaction.begin();
-		//
-		// entityManager.clear();
-		// }
-		//
-		// Post post = new Post(String.format("Post %d", i + 1));
-		//
-		// entityManager.persist(post);
-		// }
-		//
-		// entityTransaction.commit();
-		// } catch (RuntimeException e) {
-		// if (entityTransaction.isActive()) {
-		// entityTransaction.rollback();
-		// }
-		// throw e;
-		// } finally {
-		// entityManager.close();
-		// }
+	public void transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI) {
+
+		Integer batchID = evidenceTransferUI.getBatchID();
+		String loggedinUser = employeeAuth.getUserName();
+		Integer employeeID = employeeAuth.getEmployeeId();
+		String evidenceTransferTypeCode = evidenceTransferUI.getEvidenceTransferTypeCode();
+		String comments = evidenceTransferUI.getComments();
+		Integer transferReason = evidenceTransferUI.getTransferReason();
+		Integer storageAreaID = evidenceTransferUI.getStorageAreaID();
+		String storageLocationID = evidenceTransferUI.getStorageLocationID();
+		Integer witness1ID = evidenceTransferUI.getWitness1ID();
+		Integer witness2ID = evidenceTransferUI.getWitness2ID();
+		Integer locationID = evidenceTransferUI.getLocationID();
+		Integer organizationID = evidenceTransferUI.getOrganizationID();
+		String evidenceTransferQuery = evidenceTransferRepo.setQueryForEvidenceTransferTable(batchID,
+				evidenceTransferTypeCode, employeeID, loggedinUser, comments, transferReason, storageAreaID,
+				storageLocationID, locationID, organizationID, witness1ID, witness2ID);
+		String evidenceQuery = evidenceTransferRepo.setQueryForEvidenceTable(batchID, employeeID, storageAreaID,
+				storageLocationID, locationID, organizationID);
+		evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery);
 	}
 
 	public List<ErrorMessage> validateEvidenceTransfer(Integer batchID, EvidenceTransferUI evidenceTransferUI)
@@ -112,7 +82,7 @@ public class EvidenceTransferService {
 			errorMessage.setErrorMessages("At Unit can not be left blank.");
 			errorMessagesList.add(errorMessage);
 		}
-		if (evidenceTransferUI.getStorageArea() == null || evidenceTransferUI.getStorageArea() == 0) {
+		if (evidenceTransferUI.getStorageAreaID() == null || evidenceTransferUI.getStorageAreaID() == 0) {
 			errorMessage = new ErrorMessage();
 			errorMessage.setFieldName("storageArea");
 			errorMessage.setErrorMessages("Storage Area field can not be left blank.");
@@ -141,7 +111,7 @@ public class EvidenceTransferService {
 		}
 
 		Integer employeeID = evidenceTransferUI.getEmployeeID();
-		Integer transferInStorageArea = evidenceTransferUI.getStorageArea();
+		Integer transferInStorageArea = evidenceTransferUI.getStorageAreaID();
 		Integer transferOutStorageArea = evidenceRepo.getEvidenceTransferOutLocation(batchID);
 		// transferOutStorageArea = 750;
 		Integer transferInAndOutAllowed = 0;

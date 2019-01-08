@@ -1,6 +1,7 @@
 package gov.fbi.elabs.crossroads.controller;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -41,15 +42,18 @@ public class LoginController {
 	
 	@RequestMapping(value="signout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
-	public ResponseEntity<Object> logout(HttpSession session)  throws BaseApplicationException {
-		System.out.println("Redis Session Before invalidate >> "+redisRepo.getSession(session.getId()));
-		session.invalidate();
-		SecurityContextHolder.clearContext();
+	public ResponseEntity<Object> logout(HttpServletRequest request)  throws BaseApplicationException {
+		System.out.println("Redis Session Before invalidate >> "+redisRepo.getSession(request.getSession().getId()));
+		HttpSession session= request.getSession(false);
+	    SecurityContextHolder.clearContext();
+	    if(session != null) {
+	       session.invalidate();
+	    }
 		System.out.println("Redis Session After invalidate>> "+redisRepo.getSession(session.getId()));
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="test",method = RequestMethod.GET)
+	@RequestMapping(value="/login/test",method = RequestMethod.GET)
 	@ApiOperation(value = "test")
 	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
 		System.out.println("Login Session "+session.getId());

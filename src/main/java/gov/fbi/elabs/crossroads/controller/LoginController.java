@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -23,25 +25,31 @@ public class LoginController {
 	
 	@RequestMapping(value="login",method = RequestMethod.POST)
 	@ApiOperation(value = "Login")
-	public ResponseEntity<Object> login(HttpSession session) 
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "Authorization", value = "Authentication Token", paramType = "header", dataType = "string", required = true)
+		})
+	public ResponseEntity<String> login(HttpSession session) 
 			throws BaseApplicationException {
 		System.out.println("Login Session "+session.getId());
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<String>(session.getId(),HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="logout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "Authorization", value = "Authentication Token", paramType = "header", dataType = "string", required = true)
+		})
 	public ResponseEntity<Object> logout()  throws BaseApplicationException {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="test",method = RequestMethod.GET)
 	@ApiOperation(value = "test")
-	public ResponseEntity<Object> test(HttpSession session)  throws BaseApplicationException {
+	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
 		System.out.println("Login Session "+session.getId());
 		String user  = SecurityContextHolder.getContext().getAuthentication().getName();
 		System.out.println("Login Session "+user);
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(user+":"+session.getId(),HttpStatus.OK);
 	}
 
 }

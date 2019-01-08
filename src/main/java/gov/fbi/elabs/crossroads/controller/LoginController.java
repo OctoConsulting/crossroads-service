@@ -39,7 +39,7 @@ public class LoginController {
 		return new ResponseEntity<String>(sessionId,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="logout",method = RequestMethod.POST)
+	@RequestMapping(value="signout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
 	public ResponseEntity<Object> logout(HttpSession session)  throws BaseApplicationException {
 		System.out.println("Redis Session Before invalidate >> "+redisRepo.getSession(session.getId()));
@@ -61,7 +61,6 @@ public class LoginController {
 			logger.error("Error in getting Auth Context..",e);
 			return new ResponseEntity<>(session.getId(),HttpStatus.OK);
 		}
-		
 	}
 
 }

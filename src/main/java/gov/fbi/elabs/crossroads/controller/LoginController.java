@@ -3,6 +3,7 @@ package gov.fbi.elabs.crossroads.controller;
 
 import javax.servlet.http.HttpSession;
 
+
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -25,9 +24,6 @@ public class LoginController {
 	
 	@RequestMapping(value="login",method = RequestMethod.POST)
 	@ApiOperation(value = "Login")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Authorization", value = "Authentication Token", paramType = "header", dataType = "string", required = true)
-		})
 	public ResponseEntity<String> login(HttpSession session) 
 			throws BaseApplicationException {
 		System.out.println("Login Session "+session.getId());
@@ -36,9 +32,6 @@ public class LoginController {
 	
 	@RequestMapping(value="logout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Authorization", value = "Authentication Token", paramType = "header", dataType = "string", required = true)
-		})
 	public ResponseEntity<Object> logout()  throws BaseApplicationException {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

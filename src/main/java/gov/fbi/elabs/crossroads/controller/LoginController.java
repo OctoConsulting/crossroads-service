@@ -3,7 +3,8 @@ package gov.fbi.elabs.crossroads.controller;
 
 import javax.servlet.http.HttpSession;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
@@ -22,17 +23,19 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "Login Controller", description = "Login/Logout Operations")
 public class LoginController {
 	
+	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@RequestMapping(value="login",method = RequestMethod.POST)
 	@ApiOperation(value = "Login")
 	public ResponseEntity<String> login(HttpSession session) 
 			throws BaseApplicationException {
-		System.out.println("Login Session "+session.getId());
+		logger.info("Login Session ID "+session.getId());
 		return new ResponseEntity<String>(session.getId(),HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="logout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
-	public ResponseEntity<Object> logout()  throws BaseApplicationException {
+	public ResponseEntity<Object> logout(HttpSession session)  throws BaseApplicationException {
+		session.invalidate();
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -40,9 +43,15 @@ public class LoginController {
 	@ApiOperation(value = "test")
 	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
 		System.out.println("Login Session "+session.getId());
-		String user  = SecurityContextHolder.getContext().getAuthentication().getName();
-		System.out.println("Login Session "+user);
-		return new ResponseEntity<>(user+":"+session.getId(),HttpStatus.OK);
+		try {
+			String user  = SecurityContextHolder.getContext().getAuthentication().getName();
+			logger.info("Login User Session "+user);
+			return new ResponseEntity<>(user+":"+session.getId(),HttpStatus.OK);
+		}catch (Exception e) {
+			logger.error("Error in getting Auth Context..",e);
+			return new ResponseEntity<>(session.getId(),HttpStatus.OK);
+		}
+		
 	}
 
 }

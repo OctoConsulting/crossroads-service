@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -32,6 +33,7 @@ public class LoginController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@RequestMapping(value="login",method = RequestMethod.POST)
 	@ApiOperation(value = "Login")
+	@ApiImplicitParam(name = "Authorization", value = "Authentication Basic Auth", paramType = "header", dataType = "string", required = true) 
 	public ResponseEntity<String> login(HttpSession session) 
 			throws BaseApplicationException {
 		String sessionId = session.getId();
@@ -40,7 +42,7 @@ public class LoginController {
 		return new ResponseEntity<String>(sessionId,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="signout",method = RequestMethod.POST)
+	@RequestMapping(value="logout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
 	public ResponseEntity<Object> logout(HttpServletRequest request)  throws BaseApplicationException {
 		System.out.println("Redis Session Before invalidate >> "+redisRepo.getSession(request.getSession().getId()));
@@ -53,13 +55,12 @@ public class LoginController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/login/test",method = RequestMethod.GET)
+	@RequestMapping(value="/test",method = RequestMethod.GET)
 	@ApiOperation(value = "test")
 	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
-		System.out.println("Login Session "+session.getId());
 		try {
 			String user  = SecurityContextHolder.getContext().getAuthentication().getName();
-			logger.info("Login User Session "+user);
+			logger.info("Login User Session "+user+" >>>>>>>>>>>>>>>>>>>>>>>>>> "+redisRepo.getSession(session.getId()));
 			return new ResponseEntity<>(user+":"+session.getId(),HttpStatus.OK);
 		}catch (Exception e) {
 			logger.error("Error in getting Auth Context..",e);

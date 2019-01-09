@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
@@ -30,12 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf()
-		.disable().authorizeRequests()
-		.antMatchers("/login")
-		.authenticated().and()
-		.httpBasic();
-		http.authorizeRequests().anyRequest().permitAll();
+		http.csrf().disable()
+		.authorizeRequests().antMatchers("/login","/swagger-ui.html/**","/v2/api-docs","/swagger-resources","/configuration/ui","/configuration/security").permitAll().and()
+		.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+		 //http.authorizeRequests().anyRequest().permitAll();
 		/*http.csrf().disable()
 		.authorizeRequests().antMatchers("/login")
 		.authenticated().antMatchers(HttpMethod.OPTIONS, "*").permitAll()

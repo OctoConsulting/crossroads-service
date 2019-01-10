@@ -29,4 +29,7 @@ public class Constants {
 	public static final String CAN_TRANSFER_BATCH = "CanTransferBatch";
 	public static final String TRANSFER = "TRANSFER";
 
+	public static final String LOGGED_IN_USER = "loggedInUser";
+	public static final String WITNESS = "Witness";
+
 }

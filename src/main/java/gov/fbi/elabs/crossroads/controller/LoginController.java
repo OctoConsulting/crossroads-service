@@ -31,7 +31,7 @@ public class LoginController {
 	RedisOperationsSessionRepository redisRepo;
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-	@RequestMapping(value="login",method = RequestMethod.POST)
+	@RequestMapping(value="login",method = RequestMethod.POST,produces = {"text/plain"})
 	@ApiOperation(value = "Login")
 	@ApiImplicitParam(name = "Authorization", value = "Authentication Basic Auth", paramType = "header", dataType = "string", required = true) 
 	public ResponseEntity<String> login(HttpSession session) 
@@ -55,7 +55,7 @@ public class LoginController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/test",method = RequestMethod.GET)
+	@RequestMapping(value="/test",method = RequestMethod.GET, produces = {"text/plain"} )
 	@ApiOperation(value = "test")
 	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
 		try {

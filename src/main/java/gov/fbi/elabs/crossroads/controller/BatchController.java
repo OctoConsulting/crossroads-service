@@ -55,7 +55,8 @@ public class BatchController {
 			@ApiImplicitParam(name = "sortBy", value = "Sort by either ASC or DESC", dataType = "string", paramType = "query", defaultValue = "ASC", allowableValues = "ASC,DESC"),
 			@ApiImplicitParam(name = "pageNum", value = "Provide Page Number", dataType = "int", paramType = "query", defaultValue = "1"),
 			@ApiImplicitParam(name = "limit", value = "Provide No. of results in a payload", dataType = "int", paramType = "query", defaultValue = "10"),
-			@ApiImplicitParam(name = "Cookie", value = "Authentication Cookie", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "Cookie", value = "Authentication Cookie", paramType = "header", dataType = "string", required = false),
+			@ApiImplicitParam(name = "JSESSIONID", value = "JSESSIONID Value", paramType = "header", dataType = "string", required = false) })
 	public ResponseEntity<Resource<BatchDetails>> getBatchDetails(
 			@RequestParam(value = "days", required = true) Integer days,
 			@RequestParam(value = "searchTerm", required = false) String searchTerm,

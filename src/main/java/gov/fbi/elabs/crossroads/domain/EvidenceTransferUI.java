@@ -16,8 +16,6 @@ public class EvidenceTransferUI {
 	private String employeeUserName;
 	private String employeePwd;
 
-	private String transferType;
-
 	private Integer witness1ID;
 	private String witness1UserName;
 	private String witness1Pwd;
@@ -214,14 +212,6 @@ public class EvidenceTransferUI {
 
 	public void setBatchCreationDate(Timestamp batchCreationDate) {
 		this.batchCreationDate = batchCreationDate;
-	}
-
-	public String getTransferType() {
-		return transferType;
-	}
-
-	public void setTransferType(String transferType) {
-		this.transferType = transferType;
 	}
 
 	public Integer getEmployeeID() {

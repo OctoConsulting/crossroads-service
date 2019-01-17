@@ -16,6 +16,7 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,14 +53,14 @@ public class CustodyController {
 			@ApiImplicitParam(name = "atLabId", value = "Provide AtLabId selected for the employee", dataType = "int", paramType = "query", required = true),
 			@ApiImplicitParam(name = "atUnitId", value = "Provide AtUnitId selected for the employee", dataType = "int", paramType = "query", required = true),
 			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<CustodyArea>> getCustodyAreaInfo(
 			@RequestParam(value = "atLabId", required = true) Integer locationId,
 			@RequestParam(value = "atUnitId", required = true) Integer organizationId,
 			@RequestParam(value = "status", required = true, defaultValue = "Everything") String status,
 			HttpServletRequest request) throws BaseApplicationException {
 
-		String username = (String) request.getAttribute("username");
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
 		if (employeeAuth.getEmployeeId() == null
@@ -91,7 +92,7 @@ public class CustodyController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "custodyAreaId", value = "Provide custodyAreaId selected", dataType = "int", paramType = "query", required = true),
 			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<CustodyLocation>> getCustodyLocationList(
 			@RequestParam(value = "custodyAreaId", required = true) Integer custodyAreaId,
 			@RequestParam(value = "status", required = true, defaultValue = "Everything") String status,

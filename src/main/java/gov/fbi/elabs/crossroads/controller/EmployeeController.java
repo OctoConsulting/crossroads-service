@@ -17,6 +17,7 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,14 +53,14 @@ public class EmployeeController {
 			@ApiImplicitParam(name = "emailIds", value = "Provide email ids to be retrieved", dataType = "string", paramType = "query"),
 			@ApiImplicitParam(name = "mode", value = "Provide loggedInUser details to get employee details from xauth or witness for details ddrop down", dataType = "string", paramType = "query", allowableValues = "loggedInUser,Witness", defaultValue = "loggedInUser"),
 			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<Employee>> getEmployeeDetails(
 			@RequestParam(value = "exceptIds", required = false) String exceptIds,
 			@RequestParam(value = "emailIds", required = false) String emailIds,
 			@RequestParam(value = "mode", required = true) String mode,
 			@RequestParam(value = "status", required = false) String status, HttpServletRequest request) {
 
-		String username = (String) request.getAttribute("username");
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
 		if (employeeAuth.getEmployeeId() == null

@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import gov.fbi.elabs.crossroads.domain.Employee;
@@ -49,7 +50,7 @@ public class EmployeeAuthUtil {
 
 	public Boolean checkTaskPerm(HttpServletRequest request, String task) {
 
-		String username = (String) request.getAttribute("username");
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = this.getEmployeeAuthDetails(username);
 
 		if (employeeAuth.getEmployeeId() == null
@@ -62,7 +63,7 @@ public class EmployeeAuthUtil {
 	}
 
 	public Boolean checkRoleTasks(HttpServletRequest request) {
-		String username = (String) request.getAttribute("username");
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = this.getEmployeeAuthDetails(username);
 
 		if (employeeAuth.getEmployeeId() == null

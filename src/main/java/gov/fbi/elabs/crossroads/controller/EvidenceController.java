@@ -49,7 +49,7 @@ public class EvidenceController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "batchId", value = "Provide Batch id for which evidences to be retrieved", dataType = "int", paramType = "query", required = true),
 			@ApiImplicitParam(name = "hierarchy", value = "Provide true if hierarchy results to be returned too", dataType = "boolean", paramType = "query", required = true, allowableValues = "true,false"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<Evidence>> getEvidenceForBatch(
 			@RequestParam(value = "batchId", required = true) Integer batchId,
 			@RequestParam(value = "hierarchy", required = true) Boolean hierarchy, HttpServletRequest request)
@@ -88,7 +88,7 @@ public class EvidenceController {
 	@ApiOperation(value = "Fetch Evidence Details for evidenceSubmissionId")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "evidenceSubmissionId", value = "Provide evidenceSubmissionId of the parent", dataType = "int", paramType = "query", required = true),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<Evidence>> getEvidenceHierarchyDetails(
 			@RequestParam(value = "evidenceSubmissionId", required = true) Integer evidenceSubmissionId,
 			HttpServletRequest request) throws BaseApplicationException {

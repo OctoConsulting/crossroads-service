@@ -6,6 +6,6 @@ import org.springframework.session.web.context.AbstractHttpSessionApplicationIni
 
 @Configuration
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 1800)
-public class SessionConfig  extends AbstractHttpSessionApplicationInitializer {
-    
+public class SessionConfig extends AbstractHttpSessionApplicationInitializer {
+
 }

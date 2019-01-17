@@ -1,13 +1,14 @@
 package gov.fbi.elabs.crossroads.filter;
 
 import org.springframework.beans.factory.annotation.Value;
-
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.session.web.http.HeaderHttpSessionStrategy;
 
 
 @Configuration
@@ -48,4 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.groupSearchBase(base).contextSource()
 		.url(url).port(389).managerDn(bindUser).managerPassword(bindPwd);
 	}
+	
+	@Bean
+	HeaderHttpSessionStrategy sessionStrategy() {
+        return new HeaderHttpSessionStrategy();
+    }
 }

@@ -2,17 +2,16 @@ package gov.fbi.elabs.crossroads.controller;
 
 
 import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +26,6 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = "Login Controller", description = "Login/Logout Operations")
 public class LoginController {
 	
-	@Autowired
-	RedisOperationsSessionRepository redisRepo;
-	
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@RequestMapping(value="login",method = RequestMethod.POST,produces = {"text/plain"})
 	@ApiOperation(value = "Login")
@@ -38,20 +34,17 @@ public class LoginController {
 			throws BaseApplicationException {
 		String sessionId = session.getId();
 		System.out.println("Login Session ID "+sessionId);
-		System.out.println("Redis Session Created >> "+redisRepo.getSession(sessionId));
 		return new ResponseEntity<String>(sessionId,HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="logout",method = RequestMethod.POST)
 	@ApiOperation(value = "logout")
 	public ResponseEntity<Object> logout(HttpServletRequest request)  throws BaseApplicationException {
-		System.out.println("Redis Session Before invalidate >> "+redisRepo.getSession(request.getSession().getId()));
 		HttpSession session= request.getSession(false);
 	    SecurityContextHolder.clearContext();
 	    if(session != null) {
 	       session.invalidate();
 	    }
-		System.out.println("Redis Session After invalidate>> "+redisRepo.getSession(session.getId()));
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -60,7 +53,6 @@ public class LoginController {
 	public ResponseEntity<String> test(HttpSession session)  throws BaseApplicationException {
 		try {
 			String user  = SecurityContextHolder.getContext().getAuthentication().getName();
-			logger.info("Login User Session "+user+" >>>>>>>>>>>>>>>>>>>>>>>>>> "+redisRepo.getSession(session.getId()));
 			return new ResponseEntity<>(user+":"+session.getId(),HttpStatus.OK);
 		}catch (Exception e) {
 			logger.error("Error in getting Auth Context..",e);

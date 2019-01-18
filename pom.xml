@@ -38,21 +38,16 @@
 
     <dependencies>
     
-		 <dependency>
+		<dependency>
 		    <groupId>org.springframework.session</groupId>
 		    <artifactId>spring-session</artifactId>
-		</dependency>
+		</dependency> 
 		
 		<dependency>
-			<groupId>com.hazelcast</groupId>
-			<artifactId>hazelcast</artifactId>
-		</dependency>
-			
-		<dependency>
-		  <groupId>com.hazelcast</groupId>
-		  <artifactId>hazelcast-spring</artifactId>
-		</dependency>
-		
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency> 
+        
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
@@ -68,6 +63,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
@@ -209,6 +205,14 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session</artifactId>
 		</dependency>
     </dependencies>
 

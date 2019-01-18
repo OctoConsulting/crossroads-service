@@ -47,7 +47,7 @@ public class TransferReasonController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "ids", value = "Provide Transfer Reason ids", dataType = "string", paramType = "query"),
 			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Reason", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<EvidenceTransferReason>> getTransferReason(
 			@RequestParam(value = "ids", required = false) String ids,
 			@RequestParam(value = "status", required = true, defaultValue = "Everything") String status,

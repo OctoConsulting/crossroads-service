@@ -47,7 +47,7 @@ public class TransferTypeController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "codes", value = "Provide Transfer Type codes", dataType = "string", paramType = "query"),
 			@ApiImplicitParam(name = "status", value = "Provide status of the Transfer Type", dataType = "string", paramType = "query", allowableValues = "Everything,Active,Inactive", defaultValue = "Everything"),
-			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+			@ApiImplicitParam(name = "x-auth-token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
 	public ResponseEntity<Resources<EvidenceTransferType>> getTransferType(
 			@RequestParam(value = "codes", required = false) String codes,
 			@RequestParam(value = "status", required = true, defaultValue = "Everything") String status,

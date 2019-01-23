@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 
 public class Constants {
 
+	public static final String AUTHENTICATION_HEADER = "X-Auth-Token";
+
 	public static final String EVERYTHING = "Everything";
 	public static final String ACTIVE = "Active";
 	public static final String INACTIVE = "Inactive";
@@ -13,6 +15,10 @@ public class Constants {
 
 	public static final String ASC = "ASC";
 	public static final String DESC = "DESC";
+
+	public static final String TRANSFER_STATUS_COMPLETE = "Complete";
+
+	// Evidence Transfer UI Object fields
 
 	public static final String USERNAME_PREFIX = "ELAB\\";
 	public static final ImmutableList<String> ROLES = ImmutableList.of("FBI Examiner", "FBI Supervisor",

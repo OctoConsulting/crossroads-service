@@ -115,4 +115,26 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 
 	}
 
+	public List<Evidence> getEvidenceDetailForTransfer(Integer batchId) throws BaseApplicationException {
+		StringBuilder builder = new StringBuilder();
+		builder.append("select * from Evidence");
+		SQLQuery sqlQuery = createSQLQuery(builder.toString());
+		List<Evidence> evidenceList = sqlQuery.list();
+		return evidenceList;
+	}
+
+	public Integer getEvidenceTransferOutLocation(Integer batchId) throws BaseApplicationException {
+		StringBuilder builder = new StringBuilder();
+		builder.append(" select distinct CustodyLocationID  from BatchEvidence be ");
+		builder.append(" left join Evidence e ");
+		builder.append(
+				" ON be.FSLabNum = e.FSLabNum and be.EvidenceType = e.EvidenceType and be.EvidenceID = e.EvidenceID ");
+		builder.append(" left join EvidenceSubmission es ");
+		builder.append(
+				" ON e.FSLabNum = e.FSLabNum and e.EvidenceType = es.EvidenceType and e.EvidenceID = es.EvidenceID ");
+		builder.append(" where be.BatchID = " + batchId + " and CustodyLocationID is not null ");
+		SQLQuery sqlQuery = createSQLQuery(builder.toString());
+		return (Integer) sqlQuery.list().get(0);
+	}
+
 }

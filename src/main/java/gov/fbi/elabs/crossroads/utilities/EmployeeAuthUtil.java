@@ -35,6 +35,7 @@ public class EmployeeAuthUtil {
 		if (emp != null && emp.getEmployeeID() != null) {
 			auth.setDisplayName(emp.getDisplayName());
 			auth.setEmployeeId(emp.getEmployeeID());
+			System.out.println("Emp :" + emp.getUserName());
 			auth.setUserName(emp.getUserName());
 
 			List<String> roleList = authService.getRoleList(emp.getEmployeeID());

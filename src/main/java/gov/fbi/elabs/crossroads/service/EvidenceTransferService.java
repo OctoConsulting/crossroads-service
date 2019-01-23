@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
+import gov.fbi.elabs.crossroads.repository.BatchRepository;
 import gov.fbi.elabs.crossroads.repository.EvidenceRepository;
 import gov.fbi.elabs.crossroads.repository.EvidenceTransferRepository;
 import gov.fbi.elabs.crossroads.repository.StorageAreaAuthorizationRepository;
@@ -30,9 +33,15 @@ public class EvidenceTransferService {
 	EvidenceTransferRepository evidenceTransferRepo;
 
 	@Autowired
+	BatchRepository batchRepository;
+
+	@Autowired
 	LDAPService ldapService;
 
-	public void transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI) {
+	Logger logger = LoggerFactory.getLogger(EvidenceTransferService.class);
+
+	public void transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI)
+			throws BaseApplicationException {
 
 		Integer batchID = evidenceTransferUI.getBatchID();
 		String loggedinUser = employeeAuth.getUserName();
@@ -47,11 +56,18 @@ public class EvidenceTransferService {
 		Integer locationID = evidenceTransferUI.getLocationID();
 		Integer organizationID = evidenceTransferUI.getOrganizationID();
 
+		Integer newBatchId = batchRepository.getNextBatchId();
+		logger.info("Batch Id " + newBatchId);
+
+		if (newBatchId == null) {
+			return;
+		}
+
 		String evidenceTransferQuery = evidenceTransferRepo.setQueryForEvidenceTransferTable(batchID,
 				evidenceTransferTypeCode, employeeID, loggedinUser, comments, transferReason, storageAreaID,
-				storageLocationID, locationID, organizationID, witness1ID, witness2ID);
+				storageLocationID, locationID, organizationID, witness1ID, witness2ID, newBatchId);
 		String evidenceQuery = evidenceTransferRepo.setQueryForEvidenceTable(batchID, employeeID, storageAreaID,
-				storageLocationID, locationID, organizationID);
+				storageLocationID, locationID, organizationID, newBatchId);
 		evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery);
 	}
 
@@ -71,15 +87,24 @@ public class EvidenceTransferService {
 		String witness2UserName = evidenceTransferUI.getWitness2UserName();
 		String witness2Pwd = evidenceTransferUI.getWitness2Pwd();
 
+		if ((!StringUtils.isEmpty(employeeUserName) && StringUtils.isEmpty(employeePwd))
+				|| (StringUtils.isEmpty(employeeUserName) && !StringUtils.isEmpty(employeePwd))) {
+			errorMessage = new ErrorMessage();
+			errorMessage.setFieldName("EmployeeAuthorization");
+			errorMessage.setErrorMessages("Employee username and Password is required !");
+			errorMessagesList.add(errorMessage);
+		}
+
 		if (!StringUtils.isEmpty(employeeUserName) && !StringUtils.isEmpty(employeePwd)) {
 			Boolean authenticate = ldapService.authenticateUser(employeeUserName, employeePwd);
 			if (!authenticate) {
 				errorMessage = new ErrorMessage();
 				errorMessage.setFieldName("EmployeeAuthorization");
-				errorMessage.setErrorMessages("Wrong password !");
+				errorMessage.setErrorMessages("Employee Authentication Failed !");
 				errorMessagesList.add(errorMessage);
 			}
 		}
+
 		if (!StringUtils.isEmpty(evidenceTransferUI.getEvidenceTransferTypeCode())) {
 			errorMessage = new ErrorMessage();
 			errorMessage.setFieldName("transferType");
@@ -156,13 +181,14 @@ public class EvidenceTransferService {
 					"The user does not have the privilege to transfer the evidence from/to the storage area.");
 			errorMessagesList.add(errorMessage);
 		}
-//		if (transferInAndOutAllowed == 0) {
-//			errorMessage = new ErrorMessage();
-//			errorMessage.setFieldName("transferInArea");
-//			errorMessage.setErrorMessages(
-//					"The user does not have the privilege to transfer the evidence from/to the storage area.");
-//			errorMessagesList.add(errorMessage);
-//		}
+		// if (transferInAndOutAllowed == 0) {
+		// errorMessage = new ErrorMessage();
+		// errorMessage.setFieldName("transferInArea");
+		// errorMessage.setErrorMessages(
+		// "The user does not have the privilege to transfer the evidence
+		// from/to the storage area.");
+		// errorMessagesList.add(errorMessage);
+		// }
 		return errorMessagesList;
 
 		// 1. RequiredWitnessCount,IsReasonRequired from

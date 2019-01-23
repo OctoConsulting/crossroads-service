@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
@@ -85,6 +86,38 @@ public class BatchRepository extends BaseRepository<Batch> {
 		int totalCount = (int) sqlQuery.list().get(0);
 		logger.info("Total Results " + totalCount);
 		return totalCount;
+	}
+
+	public Integer getNextBatchId() throws BaseApplicationException {
+		Session session = openSession();
+		session.beginTransaction();
+
+		Integer batchId = null;
+		try {
+			StringBuilder builder = new StringBuilder();
+			builder.append(
+					"INSERT INTO Batch (EmployeeID, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate, IsActive)");
+			builder.append(" VALUES (0, 'cross_user',  GETDATE(), 'cross_user',  GETDATE(), 0)");
+			SQLQuery sqlQuery = createSQLQuery(builder.toString());
+			int executeUpdate = sqlQuery.executeUpdate();
+
+			StringBuilder sBuild = new StringBuilder(
+					"SELECT max(BatchID) from Batch where EmployeeID = 0 and CreatedBy = 'cross_user'");
+			SQLQuery q = createSQLQuery(sBuild.toString());
+			batchId = (Integer) q.list().get(0);
+
+			StringBuilder build = new StringBuilder(
+					"DELETE FROM Batch where EmployeeID = 0 and CreatedBy = 'cross_user'");
+			SQLQuery query = createSQLQuery(build.toString());
+			int executeUpdate2 = query.executeUpdate();
+
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			logger.error("Error getting next Batch id ", e);
+			session.getTransaction().rollback();
+		}
+		session.close();
+		return batchId;
 	}
 
 }

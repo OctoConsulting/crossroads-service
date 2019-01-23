@@ -25,14 +25,16 @@ public class LDAPService {
 	public Boolean authenticateUser(String username, String password) {
 		LdapTemplate ldapSpringTemplate = new LdapTemplate();
 		LdapContextSource contextSource = new LdapContextSource();
+
 		contextSource.setUserDn(bindUser);
 		contextSource.setPassword(bindPwd);
 		contextSource.setUrl(url);
 		contextSource.setBase(base);
+
 		ldapSpringTemplate.setContextSource(contextSource);
 		ldapSpringTemplate.setIgnorePartialResultException(true);
 		contextSource.afterPropertiesSet();
-		System.out.println("****************************************");
+
 		AndFilter queryFilter = new AndFilter();
 		queryFilter.and(new EqualsFilter("sAMAccountName", username));
 		Boolean authenticate = ldapSpringTemplate.authenticate("", queryFilter.toString(), password);

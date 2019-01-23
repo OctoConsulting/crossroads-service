@@ -105,7 +105,7 @@ public class EvidenceTransferService {
 			}
 		}
 
-		if (!StringUtils.isEmpty(evidenceTransferUI.getEvidenceTransferTypeCode())) {
+		if (StringUtils.isEmpty(evidenceTransferUI.getEvidenceTransferTypeCode())) {
 			errorMessage = new ErrorMessage();
 			errorMessage.setFieldName("transferType");
 			errorMessage.setErrorMessages("This transfer type is not allowed.");

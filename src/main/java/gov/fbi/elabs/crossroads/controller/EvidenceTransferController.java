@@ -85,7 +85,10 @@ public class EvidenceTransferController {
 		final long endTime = System.currentTimeMillis();
 		long timeInMillis = endTime - startTime;
 		String execTime = "Total execution time for transfer: " + (endTime - startTime) + " millis";
-		return new ResponseEntity(execTime, HttpStatus.OK);
+		ErrorMessage message = new ErrorMessage();
+		message.setFieldName("executionTime");
+		message.setErrorMessages(execTime);
+		return new ResponseEntity(message, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/v1/evidencetransfer/validate", method = RequestMethod.POST)

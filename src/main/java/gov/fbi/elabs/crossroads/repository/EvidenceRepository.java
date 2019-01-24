@@ -34,6 +34,9 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 					" ON est.FSLabNum = ev.FSLabNum and est.EvidenceType = ev.EvidenceType and est.EvidenceID = ev.EvidenceID");
 			builder.append(" where ParentId = es.EvidenceSubmissionID) as hasChildren,");
 		}
+		builder.append("e.CustodyStorageAreaID as custodyStorageAreaId, ");
+		builder.append(
+				"(select StorageAreaDescription from StorageArea where StorageAreaID = e.CustodyStorageAreaID) as area, ");
 		builder.append(
 				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
@@ -53,6 +56,8 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		sqlQuery.addScalar("evidence1B", new StringType());
 		sqlQuery.addScalar("evidenceSubmissionId", new IntegerType());
 		sqlQuery.addScalar("description", new StringType());
+		sqlQuery.addScalar("custodyStorageAreaId", new IntegerType());
+		sqlQuery.addScalar("area", new StringType());
 		sqlQuery.addScalar("location", new StringType());
 		sqlQuery.addScalar("status", new StringType());
 		sqlQuery.addScalar("parentId", new IntegerType());
@@ -83,6 +88,9 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 					" ON est.FSLabNum = ev.FSLabNum and est.EvidenceType = ev.EvidenceType and est.EvidenceID = ev.EvidenceID");
 			builder.append(" where ParentId = es.EvidenceSubmissionID) as hasChildren,");
 		}
+		builder.append("e.CustodyStorageAreaID as custodyStorageAreaId, ");
+		builder.append(
+				"(select StorageAreaDescription from StorageArea where StorageAreaID = e.CustodyStorageAreaID) as area, ");
 		builder.append(
 				"(select StorageLocationDescription from StorageLocation where StorageAreaID = e.CustodyStorageAreaID and StorageLocationCode = e.CustodyStorageLocationCode) as location, ");
 		builder.append(
@@ -99,6 +107,8 @@ public class EvidenceRepository extends BaseRepository<Evidence> {
 		sqlQuery.addScalar("evidence1B", new StringType());
 		sqlQuery.addScalar("evidenceSubmissionId", new IntegerType());
 		sqlQuery.addScalar("description", new StringType());
+		sqlQuery.addScalar("custodyStorageAreaId", new IntegerType());
+		sqlQuery.addScalar("area", new StringType());
 		sqlQuery.addScalar("location", new StringType());
 		sqlQuery.addScalar("status", new StringType());
 		sqlQuery.addScalar("parentId", new IntegerType());

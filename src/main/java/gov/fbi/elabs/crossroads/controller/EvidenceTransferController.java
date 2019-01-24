@@ -22,8 +22,7 @@ import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
-import gov.fbi.elabs.crossroads.repository.EvidenceRepository;
-import gov.fbi.elabs.crossroads.repository.EvidenceTransferRepository;
+import gov.fbi.elabs.crossroads.service.CustodyAreaService;
 import gov.fbi.elabs.crossroads.service.EvidenceTransferService;
 import gov.fbi.elabs.crossroads.utilities.Constants;
 import gov.fbi.elabs.crossroads.utilities.EmployeeAuthUtil;
@@ -42,10 +41,7 @@ public class EvidenceTransferController {
 	EvidenceTransferService evidenceTransferService;
 
 	@Autowired
-	EvidenceTransferRepository evidenceTransferRepository;
-
-	@Autowired
-	EvidenceRepository evidenceRepository;
+	CustodyAreaService custodyAreaService;
 
 	@Autowired
 	EmployeeAuthUtil employeeAuthUtil;
@@ -64,17 +60,17 @@ public class EvidenceTransferController {
 
 		if (employeeAuth.getEmployeeId() == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
-				|| !employeeAuth.getTaskList().contains(Constants.CAN_VIEW_BATCH)) {
+				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
 
 			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 		}
-		logger.trace("Manage POST /transferevidence/validate");
+
 		if (evidenceTransferUI == null) {
 			return new ResponseEntity<List<ErrorMessage>>(HttpStatus.BAD_REQUEST);
 		}
 		if (evidenceTransferUI.getBatchID() != null) {
 			List<ErrorMessage> errorMessageList = evidenceTransferService
-					.validateEvidenceTransfer(evidenceTransferUI.getBatchID(), evidenceTransferUI);
+					.validateEvidenceTransfer(evidenceTransferUI.getBatchID(), evidenceTransferUI, employeeAuth);
 			if (!errorMessageList.isEmpty()) {
 				return new ResponseEntity<List<ErrorMessage>>(errorMessageList, HttpStatus.BAD_REQUEST);
 			}
@@ -88,7 +84,7 @@ public class EvidenceTransferController {
 		evidenceTransferService.transferEvidence(employeeAuth, evidenceTransferUI);
 		final long endTime = System.currentTimeMillis();
 		long timeInMillis = endTime - startTime;
-		String execTime = "Total execution time for search request: " + (endTime - startTime) + " millis";
+		String execTime = "Total execution time for transfer: " + (endTime - startTime) + " millis";
 		return new ResponseEntity(execTime, HttpStatus.OK);
 	}
 
@@ -101,18 +97,60 @@ public class EvidenceTransferController {
 			@RequestBody EvidenceTransferUI evidenceTransferUI, HttpServletRequest request)
 			throws BaseApplicationException {
 		logger.trace("Manage POST /transferevidence/validate");
+
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
+
+		if (employeeAuth.getEmployeeId() == null
+				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
+				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
+
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+		}
+
 		if (evidenceTransferUI == null) {
 			return new ResponseEntity<List<ErrorMessage>>(HttpStatus.BAD_REQUEST);
 		}
 
 		List<ErrorMessage> errorMessageList = evidenceTransferService.validateEvidenceTransfer(batchID,
-				evidenceTransferUI);
+				evidenceTransferUI, employeeAuth);
 		if (errorMessageList.isEmpty()) {
 			return new ResponseEntity<List<ErrorMessage>>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<List<ErrorMessage>>(errorMessageList, HttpStatus.BAD_REQUEST);
 		}
 
+	}
+
+	@RequestMapping(value = "/v1/evidencetransfer/validateTransOut", method = RequestMethod.POST)
+	@ApiOperation(value = "Validate transfer of a batch with evidence.")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "custodyAreaId", value = "Provide custodyAreaId of evidence ", dataType = "int", paramType = "query", required = true),
+			@ApiImplicitParam(name = "X-Auth-Token", value = "Authentication Token", paramType = "header", dataType = "string", required = true) })
+	public ResponseEntity<String> validateTransfer(
+			@RequestParam(value = "custodyAreaId", required = true) Integer custodyAreaId)
+			throws BaseApplicationException {
+
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
+		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
+
+		if (employeeAuth.getEmployeeId() == null || custodyAreaId == null
+				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
+				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
+
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+		}
+
+		boolean auth = custodyAreaService.validateTransferAuth(employeeAuth.getEmployeeId(), custodyAreaId,
+				Constants.TRANSFER_OUT);
+		if (!auth) {
+			ErrorMessage message = new ErrorMessage();
+			message.setFieldName("transferOut");
+			message.setErrorMessages("Transfer Out is not autherized for this custody area");
+			return new ResponseEntity(message, HttpStatus.UNAUTHORIZED);
+		}
+
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
 }

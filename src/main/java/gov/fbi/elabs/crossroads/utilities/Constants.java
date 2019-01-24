@@ -31,5 +31,7 @@ public class Constants {
 
 	public static final String LOGGED_IN_USER = "loggedInUser";
 	public static final String WITNESS = "Witness";
+	public static final String TRANSFER_IN = "TRANSFER_IN";
+	public static final String TRANSFER_OUT = "TRANSFER_OUT";
 
 }

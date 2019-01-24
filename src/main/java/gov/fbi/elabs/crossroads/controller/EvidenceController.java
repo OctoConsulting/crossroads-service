@@ -68,7 +68,7 @@ public class EvidenceController {
 		}
 
 		List<Link> linkList = new ArrayList<>();
-		if (employeeAuthUtil.checkTaskPerm(request, Constants.CAN_TRANSFER_BATCH)) {
+		if (employeeAuthUtil.checkTaskPerm(Constants.CAN_TRANSFER_BATCH)) {
 			Link transferBatchLink = linkTo(
 					methodOn(EvidenceController.class).getEvidenceForBatch(batchId, hierarchy, request))
 							.withRel(Constants.TRANSFER);
@@ -107,7 +107,7 @@ public class EvidenceController {
 		}
 
 		List<Link> linkList = new ArrayList<>();
-		if (employeeAuthUtil.checkTaskPerm(request, Constants.CAN_TRANSFER_BATCH)) {
+		if (employeeAuthUtil.checkTaskPerm(Constants.CAN_TRANSFER_BATCH)) {
 			Link transferBatchLink = linkTo(
 					methodOn(EvidenceController.class).getEvidenceHierarchyDetails(evidenceSubmissionId, request))
 							.withRel(Constants.TRANSFER);

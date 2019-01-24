@@ -66,4 +66,28 @@ public class CustodyAreaRepository extends BaseRepository<CustodyArea> {
 		return areaList;
 	}
 
+	public boolean custodyAreaAuthorization(Integer employeeId, Integer custodyAreaId, String type)
+			throws BaseApplicationException {
+		logger.info("Employee:  " + employeeId + " | custodyAreaId: " + custodyAreaId + " | type: " + type);
+
+		StringBuilder builder = new StringBuilder();
+		if (Constants.TRANSFER_OUT.equalsIgnoreCase(type)) {
+			builder.append("Select TransferInAllowed from StorageAreaAuthorization");
+		} else if (Constants.TRANSFER_IN.equalsIgnoreCase(type)) {
+			builder.append("Select TransferOutAllowed from StorageAreaAuthorization");
+		}
+
+		builder.append(" where EmployeeID = " + employeeId);
+		builder.append(" and StorageAreaID = " + custodyAreaId);
+
+		SQLQuery sqlQuery = createSQLQuery(builder.toString());
+		List list = sqlQuery.list();
+		boolean auth = false;
+		if (!list.isEmpty()) {
+			auth = (boolean) sqlQuery.list().get(0);
+		}
+
+		return auth;
+	}
+
 }

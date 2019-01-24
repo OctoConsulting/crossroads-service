@@ -44,4 +44,12 @@ public class CustodyAreaService {
 		return locList;
 	}
 
+	public Boolean validateTransferAuth(Integer employeeId, Integer custodyAreaId, String type)
+			throws BaseApplicationException {
+
+		Boolean auth = custodyAreaRepository.custodyAreaAuthorization(employeeId, custodyAreaId, type);
+		return auth;
+
+	}
+
 }

@@ -35,7 +35,6 @@ public class EmployeeAuthUtil {
 		if (emp != null && emp.getEmployeeID() != null) {
 			auth.setDisplayName(emp.getDisplayName());
 			auth.setEmployeeId(emp.getEmployeeID());
-			System.out.println("Emp :" + emp.getUserName());
 			auth.setUserName(emp.getUserName());
 
 			List<String> roleList = authService.getRoleList(emp.getEmployeeID());
@@ -49,7 +48,7 @@ public class EmployeeAuthUtil {
 		return auth;
 	}
 
-	public Boolean checkTaskPerm(HttpServletRequest request, String task) {
+	public Boolean checkTaskPerm(String task) {
 
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = this.getEmployeeAuthDetails(username);

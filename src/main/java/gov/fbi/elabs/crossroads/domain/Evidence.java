@@ -18,6 +18,8 @@ public class Evidence extends ResourceSupport {
 
 	private String description;
 
+	private String area;
+
 	private String location;
 
 	private String status;
@@ -29,6 +31,8 @@ public class Evidence extends ResourceSupport {
 	private Integer parentId;
 
 	private Integer hasChildren;
+
+	private Integer custodyStorageAreaId;
 
 	/**
 	 * @return the evidence
@@ -73,6 +77,21 @@ public class Evidence extends ResourceSupport {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * @return the area
+	 */
+	public String getArea() {
+		return area;
+	}
+
+	/**
+	 * @param area
+	 *            the area to set
+	 */
+	public void setArea(String area) {
+		this.area = area;
 	}
 
 	/**
@@ -178,6 +197,21 @@ public class Evidence extends ResourceSupport {
 	 */
 	public void setHasChildren(Integer hasChildren) {
 		this.hasChildren = hasChildren;
+	}
+
+	/**
+	 * @return the custodyStorageAreaId
+	 */
+	public Integer getCustodyStorageAreaId() {
+		return custodyStorageAreaId;
+	}
+
+	/**
+	 * @param custodyStorageAreaId
+	 *            the custodyStorageAreaId to set
+	 */
+	public void setCustodyStorageAreaId(Integer custodyStorageAreaId) {
+		this.custodyStorageAreaId = custodyStorageAreaId;
 	}
 
 }

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class LDAPService {
 
-	@Value("${ldap.base}")
+	@Value("${ldap.auth.base}")
 	private String base;
 
-	@Value("${ldap.url}")
+	@Value("${ldap.auth.url}")
 	private String url;
 
 	@Value("${ldap.bind.user}")

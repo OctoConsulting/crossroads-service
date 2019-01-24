@@ -63,7 +63,7 @@ public class EvidenceTransferRepository extends BaseRepository {
 
 		StringBuilder sql = new StringBuilder("Update Evidence" + " set " + " Evidence.EvidenceTransferID = "
 				+ " (select max(EvidenceTransferID) from EvidenceTransfer et where et.BatchID = " + newBatchID + " and "
-				+ " et.FSLabNum = FSLabNum and et.EvidenceID = EvidenceID and et.EvidenceType = EvidenceType and et.FromEmployeeID = "
+				+ " et.FSLabNum = Evidence.FSLabNum and et.EvidenceID = Evidence.EvidenceID and et.EvidenceType = Evidence.EvidenceType and et.FromEmployeeID = "
 				+ employeeID + " and et.ToEmployeeID is null ), " + " Evidence.CustodyEmployeeID = " + employeeID + ","
 				+ " Evidence.CustodyLocationID = " + locationID + "," + " Evidence.CustodyOrganizationID = "
 				+ organizationID + "," + " Evidence.CustodyStorageAreaID = (CASE "

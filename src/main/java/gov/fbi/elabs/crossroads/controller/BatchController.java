@@ -1,9 +1,9 @@
 package gov.fbi.elabs.crossroads.controller;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -55,15 +55,15 @@ public class BatchController {
 			@ApiImplicitParam(name = "sortBy", value = "Sort by either ASC or DESC", dataType = "string", paramType = "query", defaultValue = "ASC", allowableValues = "ASC,DESC"),
 			@ApiImplicitParam(name = "pageNum", value = "Provide Page Number", dataType = "int", paramType = "query", defaultValue = "1"),
 			@ApiImplicitParam(name = "limit", value = "Provide No. of results in a payload", dataType = "int", paramType = "query", defaultValue = "10"),
-			@ApiImplicitParam(name = "x-auth-token", value = "x-auth-token", dataType = "string", paramType = "header", required=true)})
+			@ApiImplicitParam(name = "x-auth-token", value = "x-auth-token", dataType = "string", paramType = "header", required = true) })
 	public ResponseEntity<Resource<BatchDetails>> getBatchDetails(
 			@RequestParam(value = "days", required = true) Integer days,
 			@RequestParam(value = "searchTerm", required = false) String searchTerm,
 			@RequestParam(value = "orderBy", required = true, defaultValue = "Name") String orderBy,
 			@RequestParam(value = "sortBy", required = true, defaultValue = "ASC") String sortBy,
 			@RequestParam(value = "pageNum", required = true, defaultValue = "1") Integer pageNum,
-			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit
-			) throws BaseApplicationException {
+			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit)
+			throws BaseApplicationException {
 
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
@@ -81,14 +81,26 @@ public class BatchController {
 
 		int results = batchList != null ? batchList.size() : 0;
 		for (Batch batch : batchList) {
-			batch.add(linkTo(methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy, pageNum,
-					limit)).withSelfRel());
+			batch.add(linkTo(
+					methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy, pageNum, limit))
+							.withSelfRel());
 		}
 
-		Link selfLink = linkTo(methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy,
-				pageNum, limit)).withSelfRel();
+		Link selfLink = linkTo(
+				methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy, pageNum, limit))
+						.withSelfRel();
+
+		List<Link> linkList = new ArrayList<>();
+		linkList.add(selfLink);
+		if (employeeAuthUtil.checkTaskPerm(Constants.CAN_TRANSFER_BATCH) && results > 0) {
+			Link transferBatchLink = linkTo(
+					methodOn(BatchController.class).getBatchDetails(days, searchTerm, orderBy, sortBy, pageNum, limit))
+							.withRel(Constants.TRANSFER);
+			linkList.add(transferBatchLink);
+		}
+
 		logger.info("No of batches returned " + results);
-		Resource<BatchDetails> batchResources = new Resource<>(details, selfLink);
+		Resource<BatchDetails> batchResources = new Resource<>(details, linkList);
 		return new ResponseEntity<Resource<BatchDetails>>(batchResources, HttpStatus.OK);
 	}
 

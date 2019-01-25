@@ -78,6 +78,14 @@ public class EvidenceTransferService {
 
 		ErrorMessage errorMessage;
 
+		if (evidenceTransferUI == null) {
+			errorMessage = new ErrorMessage();
+			errorMessage.setFieldName("Evidence Transfer Body Missing");
+			errorMessage.setErrorMessages("Transfer Type is required");
+			errorMessagesList.add(errorMessage);
+			return errorMessagesList;
+		}
+
 		String employeeUserName = evidenceTransferUI.getEmployeeUserName();
 		String employeePwd = evidenceTransferUI.getEmployeePwd();
 
@@ -87,28 +95,50 @@ public class EvidenceTransferService {
 		String witness2UserName = evidenceTransferUI.getWitness2UserName();
 		String witness2Pwd = evidenceTransferUI.getWitness2Pwd();
 
-		if ((!StringUtils.isEmpty(employeeUserName) && StringUtils.isEmpty(employeePwd))
-				|| (StringUtils.isEmpty(employeeUserName) && !StringUtils.isEmpty(employeePwd))) {
-			errorMessage = new ErrorMessage();
-			errorMessage.setFieldName("EmployeeAuthorization");
-			errorMessage.setErrorMessages("Employee username and Password is required !");
-			errorMessagesList.add(errorMessage);
-		}
+		// if ((!StringUtils.isEmpty(employeeUserName) &&
+		// StringUtils.isEmpty(employeePwd))
+		// || (StringUtils.isEmpty(employeeUserName) &&
+		// !StringUtils.isEmpty(employeePwd))) {
+		// errorMessage = new ErrorMessage();
+		// errorMessage.setFieldName("EmployeeAuthorization");
+		// errorMessage.setErrorMessages("Employee username and Password is
+		// required !");
+		// errorMessagesList.add(errorMessage);
+		// }
+		//
+		// if (!StringUtils.isEmpty(employeeUserName) &&
+		// !StringUtils.isEmpty(employeePwd)) {
+		// Boolean authenticate = ldapService.authenticateUser(employeeUserName,
+		// employeePwd);
+		// if (!authenticate) {
+		// errorMessage = new ErrorMessage();
+		// errorMessage.setFieldName("employeeValidated");
+		// errorMessage.setErrorMessages("Employee Authentication Failed !");
+		// errorMessagesList.add(errorMessage);
+		// }
+		// }
 
-		if (!StringUtils.isEmpty(employeeUserName) && !StringUtils.isEmpty(employeePwd)) {
-			Boolean authenticate = ldapService.authenticateUser(employeeUserName, employeePwd);
-			if (!authenticate) {
-				errorMessage = new ErrorMessage();
-				errorMessage.setFieldName("employeeValidated");
-				errorMessage.setErrorMessages("Employee Authentication Failed !");
-				errorMessagesList.add(errorMessage);
-			}
-		}
+		this.validateUserInfo(employeeUserName, employeePwd, "employeeValidated", "Employee Authentication Failed !",
+				errorMessagesList);
 
 		if (StringUtils.isEmpty(evidenceTransferUI.getEvidenceTransferTypeCode())) {
 			errorMessage = new ErrorMessage();
 			errorMessage.setFieldName("transferType");
 			errorMessage.setErrorMessages("Transfer Type is required");
+			errorMessagesList.add(errorMessage);
+		}
+
+		if (evidenceTransferUI.getEmployeeID() == null) {
+			errorMessage = new ErrorMessage();
+			errorMessage.setFieldName("employeeId");
+			errorMessage.setErrorMessages("Employee Id is required");
+			errorMessagesList.add(errorMessage);
+		}
+
+		if (evidenceTransferUI.getBatchID() == null) {
+			errorMessage = new ErrorMessage();
+			errorMessage.setFieldName("batchId");
+			errorMessage.setErrorMessages("Batch Id is required");
 			errorMessagesList.add(errorMessage);
 		}
 
@@ -141,27 +171,65 @@ public class EvidenceTransferService {
 		}
 
 		Integer witnessCount = evidenceTransferUI.getRequiredWitnessCount();
+
+		boolean w1Val = this.validateUserInfo(witness1UserName, witness1Pwd, "Witness1Authorization",
+				"Witness authorization failed !", errorMessagesList);
+
+		boolean w2Val = this.validateUserInfo(witness2UserName, witness2Pwd, "Witness2Authorization",
+				"Witness authorization failed !", errorMessagesList);
+
+		if (w1Val) {
+			if (evidenceTransferUI.getWitness1ID() == null) {
+				errorMessage = new ErrorMessage();
+				errorMessage.setFieldName("witness1Id");
+				errorMessage.setErrorMessages("Witness 1 Id is required");
+				errorMessagesList.add(errorMessage);
+			}
+		}
+
+		if (w2Val) {
+			if (evidenceTransferUI.getWitness2ID() == null) {
+				errorMessage = new ErrorMessage();
+				errorMessage.setFieldName("witness2Id");
+				errorMessage.setErrorMessages("Witness 2 Id is required");
+				errorMessagesList.add(errorMessage);
+			}
+		}
+
+		if (evidenceTransferUI.getRequiresLocation()) {
+			if (StringUtils.isEmpty(evidenceTransferUI.getStorageLocationID())) {
+				errorMessage = new ErrorMessage();
+				errorMessage.setFieldName("storageLocation");
+				errorMessage.setErrorMessages("Storage Location is required for the storage area selected");
+				errorMessagesList.add(errorMessage);
+			}
+		}
+
+		if (evidenceTransferUI.getIsReasonRequired()) {
+			if (evidenceTransferUI.getTransferReason() == null) {
+				errorMessage = new ErrorMessage();
+				errorMessage.setFieldName("transferReason");
+				errorMessage.setErrorMessages("Transfer Reason is required for this type of transfer");
+				errorMessagesList.add(errorMessage);
+			}
+		}
+
 		if (witnessCount > 0) {
-			if (witnessCount == 1) {
-				if (!StringUtils.isEmpty(witness1UserName) && !StringUtils.isEmpty(witness1Pwd)) {
-					Boolean authenticate = ldapService.authenticateUser(witness1UserName, witness1Pwd);
-					if (!authenticate) {
-						errorMessage = new ErrorMessage();
-						errorMessage.setFieldName("Witness1Authorization");
-						errorMessage.setErrorMessages("Witness authorization failed !");
-						errorMessagesList.add(errorMessage);
-					}
-				}
-			} else {
-				if (!StringUtils.isEmpty(witness2UserName) && !StringUtils.isEmpty(witness2Pwd)) {
-					Boolean authenticate = ldapService.authenticateUser(witness2UserName, witness2Pwd);
-					if (!authenticate) {
-						errorMessage = new ErrorMessage();
-						errorMessage.setFieldName("Witness2Authorization");
-						errorMessage.setErrorMessages("Witness authorization failed !");
-						errorMessagesList.add(errorMessage);
-					}
-				}
+			int count = 0;
+			if (StringUtils.isNotEmpty(witness1UserName) && StringUtils.isNotEmpty(witness1Pwd) && w1Val) {
+				count = count + 1;
+			}
+
+			if (StringUtils.isNotEmpty(witness2UserName) && StringUtils.isNotEmpty(witness2Pwd) && w2Val) {
+				count = count + 1;
+			}
+
+			if (count < witnessCount) {
+				errorMessage = new ErrorMessage();
+				errorMessage.setFieldName("witnessCount");
+				errorMessage
+						.setErrorMessages("This Transfer requires atleast " + witnessCount + " validated witnesses");
+				errorMessagesList.add(errorMessage);
 			}
 		}
 
@@ -191,6 +259,32 @@ public class EvidenceTransferService {
 		// 5. If organizationID is not null
 		// 5. If storageLocation is null
 
+	}
+
+	public boolean validateUserInfo(String username, String pwd, String field, String message,
+			List<ErrorMessage> errorList) {
+
+		if ((StringUtils.isEmpty(username) && StringUtils.isNotEmpty(pwd))
+				|| (StringUtils.isNotEmpty(username) && StringUtils.isEmpty(pwd))) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setFieldName(field);
+			errorMessage.setErrorMessages(message);
+			errorList.add(errorMessage);
+			return false;
+		}
+
+		else if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(pwd)) {
+			Boolean authenticate = ldapService.authenticateUser(username, pwd);
+			if (!authenticate) {
+				ErrorMessage errorMessage = new ErrorMessage();
+				errorMessage.setFieldName(field);
+				errorMessage.setErrorMessages(message);
+				errorList.add(errorMessage);
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

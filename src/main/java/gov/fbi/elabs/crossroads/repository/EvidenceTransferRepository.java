@@ -3,6 +3,7 @@ package gov.fbi.elabs.crossroads.repository;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -35,10 +36,11 @@ public class EvidenceTransferRepository extends BaseRepository {
 				+ "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + ", " + "\'" + "RS" + "\'" + ",'C',"
 				+ "null," + employeeID + "," + "e.CustodyLocationID," + "\'" + locationID + "\'"
 				+ ",e.CustodyOrganizationID," + "\'" + organizationID + "\'" + "," + "null," + "null" + "," + "null"
-				+ ",null," + "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID," + "\'" + comments + "\'"
-				+ ",null," + transferReason + "," + "\'" + loggedinUser + "\'" + ", GETDATE()," + "\'" + loggedinUser
-				+ "\'" + ", GETDATE(),1," + witness1ID + "," + witness2ID + ",null,null" + " from Batch b"
-				+ " left join BatchEvidence be " + " ON b.BatchID = be.BatchID " + " left join Evidence e "
+				+ ",null," + "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID,"
+				+ (comments != null ? ("\'" + comments + "\'") : null) + ",null," + transferReason + "," + "\'"
+				+ loggedinUser + "\'" + ", GETDATE()," + "\'" + loggedinUser + "\'" + ", GETDATE(),1," + witness1ID
+				+ "," + witness2ID + ",null,null" + " from Batch b" + " left join BatchEvidence be "
+				+ " ON b.BatchID = be.BatchID " + " left join Evidence e "
 				+ " ON be.FSLabNum = e.FSLabNum and be.EvidenceType = e.EvidenceType and be.EvidenceID = e.EvidenceID  "
 				+ " where b.BatchID = " + batchID);
 		sql.append(" union ");
@@ -46,11 +48,12 @@ public class EvidenceTransferRepository extends BaseRepository {
 				+ "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + ", " + "\'" + evidenceTransferTypeCode
 				+ "\'" + ",'C'," + employeeID + "," + "null," + locationID + "," + locationID + "," + organizationID
 				+ "," + organizationID + "," + "null," + storageAreaID + ","
-				+ (storageLocationID != null ? ("\'" + storageLocationID + "\'") : null) + ",null,"
-				+ "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID," + "\'" + comments + "\'" + ",null,"
-				+ transferReason + "," + "\'" + loggedinUser + "\'" + ", GETDATE()," + "\'" + loggedinUser + "\'"
-				+ ", GETDATE(),1," + witness1ID + "," + witness2ID + ",null,null" + " from Batch b"
-				+ " left join BatchEvidence be " + " ON b.BatchID = be.BatchID " + " left join Evidence e "
+				+ (StringUtils.isNotEmpty(storageLocationID) ? ("\'" + storageLocationID + "\'") : null) + ",null,"
+				+ "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID,"
+				+ (StringUtils.isNotEmpty(comments) ? ("\'" + comments + "\'") : null) + ",null," + transferReason + ","
+				+ "\'" + loggedinUser + "\'" + ", GETDATE()," + "\'" + loggedinUser + "\'" + ", GETDATE(),1,"
+				+ witness1ID + "," + witness2ID + ",null,null" + " from Batch b" + " left join BatchEvidence be "
+				+ " ON b.BatchID = be.BatchID " + " left join Evidence e "
 				+ " ON be.FSLabNum = e.FSLabNum and be.EvidenceType = e.EvidenceType and be.EvidenceID = e.EvidenceID  "
 				+ " where b.BatchID = " + batchID);
 		sql.append(")");
@@ -69,7 +72,7 @@ public class EvidenceTransferRepository extends BaseRepository {
 				+ organizationID + "," + " Evidence.CustodyStorageAreaID = (CASE "
 				+ " WHEN Evidence.EvidenceStatusCode IN ('S', 'V') THEN " + storageAreaID + " ELSE NULL " + " END), "
 				+ " CustodyStorageLocationCode = "
-				+ (storageLocationID == null ? null
+				+ (StringUtils.isEmpty(storageLocationID) ? null
 						: "(CASE " + " WHEN Evidence.EvidenceStatusCode IN ('S', 'V') THEN " + "\'" + storageLocationID
 								+ "\'" + " ELSE NULL " + " END)")
 				+ ", " + " LastModifiedBy = " + employeeID + "," + " LastModifiedDate = GETDATE() "

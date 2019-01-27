@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
-import gov.fbi.elabs.crossroads.domain.User;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 import gov.fbi.elabs.crossroads.utilities.Constants;
 import gov.fbi.elabs.crossroads.utilities.EmployeeAuthUtil;
@@ -34,10 +33,10 @@ public class LoginController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-	@RequestMapping(value = "login", method = RequestMethod.POST, produces = { "text/plain" })
+	@RequestMapping(value = "login", method = RequestMethod.POST)
 	@ApiOperation(value = "Login")
 	@ApiImplicitParam(name = "Authorization", value = "Authentication Basic Auth", paramType = "header", dataType = "string", required = true)
-	public ResponseEntity<User> login(HttpSession session) throws BaseApplicationException {
+	public ResponseEntity<String> login(HttpSession session) throws BaseApplicationException {
 		String sessionId = session.getId();
 
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
@@ -45,15 +44,15 @@ public class LoginController {
 
 		if (employeeAuth.getEmployeeId() == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)) {
-			return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
+			return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
 		}
 
-		User user = new User();
-		user.setSessionId(sessionId);
-		user.setUsername(employeeAuth.getDisplayName());
+		// User user = new User();
+		// user.setSessionId(sessionId);
+		// user.setUsername(employeeAuth.getDisplayName());
 
 		System.out.println("Login Session ID " + sessionId);
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+		return new ResponseEntity<String>(sessionId, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "logout", method = RequestMethod.POST)

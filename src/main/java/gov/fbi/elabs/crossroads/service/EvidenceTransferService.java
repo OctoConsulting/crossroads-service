@@ -1,5 +1,6 @@
 package gov.fbi.elabs.crossroads.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import gov.fbi.elabs.crossroads.domain.BatchTransferTracker;
 import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
@@ -38,6 +40,9 @@ public class EvidenceTransferService {
 	@Autowired
 	CustodyAreaService custodyAreaService;
 
+	@Autowired
+	BatchTransferTrackerService batchTransferTrackerService;
+
 	Logger logger = LoggerFactory.getLogger(EvidenceTransferService.class);
 
 	public void transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI)
@@ -63,12 +68,20 @@ public class EvidenceTransferService {
 			return;
 		}
 
+		BatchTransferTracker tracker = new BatchTransferTracker();
+		tracker.setBatchId(newBatchId);
+		tracker.setEmployeeId(employeeAuth.getEmployeeId());
+		tracker.setStartTime(new Timestamp(System.currentTimeMillis()));
+		tracker.setIsActive(true);
+
 		String evidenceTransferQuery = evidenceTransferRepo.setQueryForEvidenceTransferTable(batchID,
 				evidenceTransferTypeCode, employeeID, loggedinUser, comments, transferReason, storageAreaID,
 				storageLocationID, locationID, organizationID, witness1ID, witness2ID, newBatchId);
 		String evidenceQuery = evidenceTransferRepo.setQueryForEvidenceTable(batchID, employeeID, storageAreaID,
 				storageLocationID, locationID, organizationID, newBatchId);
-		evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery);
+		BatchTransferTracker track = batchTransferTrackerService.createTracker(tracker);
+		evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery, tracker);
+		batchTransferTrackerService.updateEndTime(track);
 	}
 
 	public List<ErrorMessage> validateEvidenceTransfer(Integer batchID, EvidenceTransferUI evidenceTransferUI,
@@ -178,23 +191,23 @@ public class EvidenceTransferService {
 		boolean w2Val = this.validateUserInfo(witness2UserName, witness2Pwd, "Witness2Authorization",
 				"Witness authorization failed !", errorMessagesList);
 
-		if (w1Val) {
-			if (evidenceTransferUI.getWitness1ID() == null) {
-				errorMessage = new ErrorMessage();
-				errorMessage.setFieldName("witness1Id");
-				errorMessage.setErrorMessages("Witness 1 Id is required");
-				errorMessagesList.add(errorMessage);
-			}
-		}
-
-		if (w2Val) {
-			if (evidenceTransferUI.getWitness2ID() == null) {
-				errorMessage = new ErrorMessage();
-				errorMessage.setFieldName("witness2Id");
-				errorMessage.setErrorMessages("Witness 2 Id is required");
-				errorMessagesList.add(errorMessage);
-			}
-		}
+		// if (!w1Val) {
+		// //if (evidenceTransferUI.getWitness1ID() == null) {
+		// errorMessage = new ErrorMessage();
+		// errorMessage.setFieldName("witness1Id");
+		// errorMessage.setErrorMessages("Witness 1 Id is required");
+		// errorMessagesList.add(errorMessage);
+		// //}
+		// }
+		//
+		// if (!w2Val) {
+		// //if (evidenceTransferUI.getWitness2ID() == null) {
+		// errorMessage = new ErrorMessage();
+		// errorMessage.setFieldName("witness2Id");
+		// errorMessage.setErrorMessages("Witness 2 Id is required");
+		// errorMessagesList.add(errorMessage);
+		// //}
+		// }
 
 		if (evidenceTransferUI.getRequiresLocation()) {
 			if (StringUtils.isEmpty(evidenceTransferUI.getStorageLocationID())) {

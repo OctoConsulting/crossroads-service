@@ -10,14 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import gov.fbi.elabs.crossroads.domain.BatchTransferTracker;
+import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
+
 @Repository
 @SuppressWarnings("unchecked")
 public class EvidenceTransferRepository extends BaseRepository {
 
 	private static Logger logger = LoggerFactory.getLogger(EvidenceTransferRepository.class);
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	Date date = new Date();
-	String todaysDate = dateFormat.format(date);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private Date date = new Date();
+	private String todaysDate = dateFormat.format(date);
 
 	public String setQueryForEvidenceTransferTable(Integer batchID, String evidenceTransferTypeCode, Integer employeeID,
 			String loggedinUser, String comments, Integer transferReason, Integer storageAreaID,
@@ -84,10 +87,14 @@ public class EvidenceTransferRepository extends BaseRepository {
 		return sql.toString();
 	}
 
-	public void transferEvidence(String evidenceTransferQuery, String evidenceQuery) {
+	public void transferEvidence(String evidenceTransferQuery, String evidenceQuery, BatchTransferTracker tracker)
+			throws BaseApplicationException {
 		Session session = openSession();
 		session.beginTransaction();
+		BatchTransferTracker track = null;
 		try {
+			// track =
+			// batchTransferTrackerRepository.createBatchTransferTracker(tracker);
 			SQLQuery sqlQueryForEvidenceTransfer = session.createSQLQuery(evidenceTransferQuery);
 			sqlQueryForEvidenceTransfer.executeUpdate();
 			SQLQuery sqlQueryForEvidence = session.createSQLQuery(evidenceQuery);
@@ -97,6 +104,13 @@ public class EvidenceTransferRepository extends BaseRepository {
 			logger.error("Transfer Unsuccessful !! An error occured while transfering the evidence.Exception : "
 					+ e.getMessage());
 		}
+		// } finally {
+		// if (track != null) {
+		// track.setEndTime(new Timestamp(System.currentTimeMillis()));
+		// track.setIsActive(false);
+		// batchTransferTrackerRepository.updateBatchTransferTracker(track);
+		// }
+		// }
 
 		session.getTransaction().commit();
 		session.close();

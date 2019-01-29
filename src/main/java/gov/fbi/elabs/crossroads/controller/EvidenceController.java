@@ -55,9 +55,10 @@ public class EvidenceController {
 			@RequestParam(value = "hierarchy", required = true) Boolean hierarchy, HttpServletRequest request)
 			throws BaseApplicationException {
 
-		if (!employeeAuthUtil.checkRoleTasks(request)) {
-			return new ResponseEntity<Resources<Evidence>>(HttpStatus.UNAUTHORIZED);
-		}
+		// if (!employeeAuthUtil.checkRoleTasks(request)) {
+		// return new
+		// ResponseEntity<Resources<Evidence>>(HttpStatus.UNAUTHORIZED);
+		// }
 
 		List<Evidence> evidenceList = evidenceService.getEvidenceListForBatch(batchId, hierarchy);
 		int results = evidenceList != null ? evidenceList.size() : 0;
@@ -93,9 +94,10 @@ public class EvidenceController {
 			@RequestParam(value = "evidenceSubmissionId", required = true) Integer evidenceSubmissionId,
 			HttpServletRequest request) throws BaseApplicationException {
 
-		if (!employeeAuthUtil.checkRoleTasks(request)) {
-			return new ResponseEntity<Resources<Evidence>>(HttpStatus.UNAUTHORIZED);
-		}
+		// if (!employeeAuthUtil.checkRoleTasks(request)) {
+		// return new
+		// ResponseEntity<Resources<Evidence>>(HttpStatus.UNAUTHORIZED);
+		// }
 
 		List<Evidence> evidenceList = evidenceService.getEvidenceHierarchy(evidenceSubmissionId);
 		int results = evidenceList != null ? evidenceList.size() : 0;

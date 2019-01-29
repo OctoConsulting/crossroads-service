@@ -22,6 +22,7 @@ import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
 import gov.fbi.elabs.crossroads.domain.ErrorMessage;
 import gov.fbi.elabs.crossroads.domain.EvidenceTransferUI;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
+import gov.fbi.elabs.crossroads.service.BatchTransferTrackerService;
 import gov.fbi.elabs.crossroads.service.CustodyAreaService;
 import gov.fbi.elabs.crossroads.service.EvidenceTransferService;
 import gov.fbi.elabs.crossroads.utilities.Constants;
@@ -46,6 +47,9 @@ public class EvidenceTransferController {
 	@Autowired
 	EmployeeAuthUtil employeeAuthUtil;
 
+	@Autowired
+	BatchTransferTrackerService batchTransferTrackerService;
+
 	@RequestMapping(value = "/v1/evidencetransfer/", method = RequestMethod.POST)
 	@ApiOperation(value = "Transfer evidence within a batch.")
 	@ApiImplicitParams({
@@ -54,11 +58,12 @@ public class EvidenceTransferController {
 			HttpServletRequest request) throws BaseApplicationException {
 
 		logger.info("Manage POST /transferevidence/");
+		final long startTime = System.currentTimeMillis();
 
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
-		if (employeeAuth.getEmployeeId() == null
+		if (employeeAuth == null || employeeAuth.getEmployeeId() == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
 				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
 
@@ -80,14 +85,17 @@ public class EvidenceTransferController {
 		}
 
 		String userNameForDB = employeeAuth.getUserName();
-		final long startTime = System.currentTimeMillis();
+
 		evidenceTransferService.transferEvidence(employeeAuth, evidenceTransferUI);
+
 		final long endTime = System.currentTimeMillis();
 		long timeInMillis = endTime - startTime;
+
 		String execTime = "Total execution time for transfer: " + (endTime - startTime) + " millis";
 		ErrorMessage message = new ErrorMessage();
 		message.setFieldName("executionTime");
 		message.setErrorMessages(execTime);
+
 		return new ResponseEntity(message, HttpStatus.OK);
 	}
 
@@ -137,7 +145,7 @@ public class EvidenceTransferController {
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
-		if (employeeAuth.getEmployeeId() == null || custodyAreaId == null
+		if (employeeAuth == null || employeeAuth.getEmployeeId() == null || custodyAreaId == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
 				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
 
@@ -150,6 +158,14 @@ public class EvidenceTransferController {
 			ErrorMessage message = new ErrorMessage();
 			message.setFieldName("transferOut");
 			message.setErrorMessages("Transfer Out is not autherized for this custody area");
+			return new ResponseEntity(message, HttpStatus.UNAUTHORIZED);
+		}
+
+		int count = batchTransferTrackerService.getTrackerPerEmployeeId(employeeAuth.getEmployeeId());
+		if (count > 0) {
+			ErrorMessage message = new ErrorMessage();
+			message.setFieldName("TransferInProgress");
+			message.setErrorMessages("Another transaction for this employee is in progress");
 			return new ResponseEntity(message, HttpStatus.UNAUTHORIZED);
 		}
 

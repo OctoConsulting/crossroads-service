@@ -35,9 +35,9 @@ public class EvidenceTransferRepository extends BaseRepository {
 				+ " EvidenceID  ,Comments ,BatchComments  ,EvidenceTransferReasonID  ,"
 				+ " CreatedBy  ,CreatedDate ,LastModifiedBy  ,LastModifiedDate ,"
 				+ "IsActive  ,Witness1Id  ,Witness2Id  ,AgencyLocationId  ,OfficerId    ) ");
-		sql.append(" ( select " + "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + " , " + newBatchId + " , "
-				+ "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + ", " + "\'" + "RS" + "\'" + ",'C',"
-				+ "null," + employeeID + "," + "e.CustodyLocationID," + "\'" + locationID + "\'"
+		sql.append("  select " + "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + " , " + newBatchId + " , "
+				+ "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + ", " + "\'" + "RS" + "\'" + " as TT "
+				+ ",'C'," + "null," + employeeID + "," + "e.CustodyLocationID," + "\'" + locationID + "\'"
 				+ ",e.CustodyOrganizationID," + "\'" + organizationID + "\'" + "," + "null," + "null" + "," + "null"
 				+ ",null," + "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID,"
 				+ (comments != null ? ("\'" + comments + "\'") : null) + ",null," + transferReason + "," + "\'"
@@ -49,8 +49,8 @@ public class EvidenceTransferRepository extends BaseRepository {
 		sql.append(" union ");
 		sql.append(" select " + "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + " , " + newBatchId + " , "
 				+ "convert(DATETIME," + "\'" + todaysDate + "\'" + ",20)" + ", " + "\'" + evidenceTransferTypeCode
-				+ "\'" + ",'C'," + employeeID + "," + "null," + locationID + "," + locationID + "," + organizationID
-				+ "," + organizationID + "," + "null," + storageAreaID + ","
+				+ "\'" + " as TT " + ",'C'," + employeeID + "," + "null," + locationID + "," + locationID + ","
+				+ organizationID + "," + organizationID + "," + "null," + storageAreaID + ","
 				+ (StringUtils.isNotEmpty(storageLocationID) ? ("\'" + storageLocationID + "\'") : null) + ",null,"
 				+ "e.FSLabNum, e.CurrentSubmissionNum,e.EvidenceType,e.EvidenceID,"
 				+ (StringUtils.isNotEmpty(comments) ? ("\'" + comments + "\'") : null) + ",null," + transferReason + ","
@@ -59,7 +59,7 @@ public class EvidenceTransferRepository extends BaseRepository {
 				+ " ON b.BatchID = be.BatchID " + " left join Evidence e "
 				+ " ON be.FSLabNum = e.FSLabNum and be.EvidenceType = e.EvidenceType and be.EvidenceID = e.EvidenceID  "
 				+ " where b.BatchID = " + batchID);
-		sql.append(")");
+		sql.append(" order by TT desc ");
 		System.out.println("EvidenceTransfer Table Query :  " + sql.toString());
 		return sql.toString();
 	}
@@ -70,8 +70,9 @@ public class EvidenceTransferRepository extends BaseRepository {
 		StringBuilder sql = new StringBuilder("Update Evidence" + " set " + " Evidence.EvidenceTransferID = "
 				+ " (select max(EvidenceTransferID) from EvidenceTransfer et where et.BatchID = " + newBatchID + " and "
 				+ " et.FSLabNum = Evidence.FSLabNum and et.EvidenceID = Evidence.EvidenceID and et.EvidenceType = Evidence.EvidenceType and et.FromEmployeeID = "
-				+ employeeID + " and et.ToEmployeeID is null ), " + " Evidence.CustodyEmployeeID = " + employeeID + ","
-				+ " Evidence.CustodyLocationID = " + locationID + "," + " Evidence.CustodyOrganizationID = "
+				+ employeeID + " and et.ToEmployeeID is null ), " + " Evidence.CustodyEmployeeID = " + "( CASE "
+				+ "		WHEN Evidence.EvidenceStatusCode <> 'S' THEN " + employeeID + "		ELSE NULL " + "	END " + ") "
+				+ "," + " Evidence.CustodyLocationID = " + locationID + "," + " Evidence.CustodyOrganizationID = "
 				+ organizationID + "," + " Evidence.CustodyStorageAreaID = (CASE "
 				+ " WHEN Evidence.EvidenceStatusCode IN ('S', 'V') THEN " + storageAreaID + " ELSE NULL " + " END), "
 				+ " CustodyStorageLocationCode = "

@@ -37,8 +37,12 @@ public class OrganizationRepository extends BaseRepository<Organization> {
 
 		if (StringUtils.isNotEmpty(status) && Constants.ACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and o.IsActive = 1");
+			builder.append(" and el.IsActive = 1");
+			builder.append(" and ol.IsActive = 1");
 		} else if (StringUtils.isNotEmpty(status) && Constants.INACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and o.IsActive = 0");
+			builder.append(" and el.IsActive = 0");
+			builder.append(" and ol.IsActive = 0");
 		}
 		builder.append(" order by IsDefaultSection desc,OrganizationName");
 

@@ -39,8 +39,10 @@ public class CustodyAreaRepository extends BaseRepository<CustodyArea> {
 
 		if (StringUtils.isNotEmpty(status) && Constants.ACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and s.IsActive = 1");
+			builder.append(" and sa.IsActive = 1");
 		} else if (StringUtils.isNotEmpty(status) && Constants.INACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and s.IsActive = 0");
+			builder.append(" and sa.IsActive = 0");
 		}
 
 		logger.info(builder.toString());

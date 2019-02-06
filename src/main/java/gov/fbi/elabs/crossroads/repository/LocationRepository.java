@@ -34,8 +34,10 @@ public class LocationRepository extends BaseRepository<Location> {
 
 		if (StringUtils.isNotEmpty(status) && Constants.ACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and l.IsActive = 1");
+			builder.append(" and el.IsActive = 1");
 		} else if (StringUtils.isNotEmpty(status) && Constants.INACTIVE.equalsIgnoreCase(status)) {
 			builder.append(" and l.IsActive = 0");
+			builder.append(" and el.IsActive = 0");
 		}
 
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());

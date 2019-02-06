@@ -27,7 +27,7 @@ public class BatchRepository extends BaseRepository<Batch> {
 		builder.append("Select batchId,employeeId,batchName,evidenceCount,expires from (");
 		builder.append("Select BatchId as batchId, EmployeeId as employeeId, Name as batchName,");
 		builder.append(" (Select count(*) from BatchEvidence where BatchID = b.BatchID) as evidenceCount,");
-		builder.append(" (Select DATEADD(day, " + days + ",b.CreatedDate)) as expires,");
+		builder.append(" (Select DATEADD(day, " + days + ",b.LastModifiedDate)) as expires,");
 		builder.append(" (Select count(*) from (");
 		builder.append(" Select distinct e.CustodyStorageAreaID,e.CustodyLocationID from BatchEvidence be");
 		builder.append(" Left Join Evidence e");
@@ -35,7 +35,7 @@ public class BatchRepository extends BaseRepository<Batch> {
 				" ON be.FSLabNum = e.FSLabNum and be.EvidenceType = e.EvidenceType and be.EvidenceID = e.EvidenceID");
 		builder.append(" where BatchID = b.BatchID) x) as locationValidation");
 		builder.append(" from Batch b where EmployeeID = " + employeeId + " and ");
-		builder.append(" CreatedDate > (Select DATEADD(day," + -days + ",GETDATE()))");
+		builder.append(" LastModifiedDate > (Select DATEADD(day," + -days + ",GETDATE()))");
 
 		if (StringUtils.isNotEmpty(query)) {
 			builder.append(" and Name like \'" + query + "\'");

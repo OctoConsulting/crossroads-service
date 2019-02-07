@@ -19,13 +19,13 @@ public class EvidenceTransferRepository extends BaseRepository {
 
 	private static Logger logger = LoggerFactory.getLogger(EvidenceTransferRepository.class);
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	private Date date = new Date();
-	private String todaysDate = dateFormat.format(date);
 
 	public String setQueryForEvidenceTransferTable(Integer batchID, String evidenceTransferTypeCode, Integer employeeID,
 			String loggedinUser, String comments, Integer transferReason, Integer storageAreaID,
 			String storageLocationID, Integer locationID, Integer organizationID, Integer witness1ID,
 			Integer witness2ID, Integer newBatchId) {
+		Date date = new Date();
+		String todaysDate = dateFormat.format(date);
 		System.out.println("DATE : " + todaysDate);
 		StringBuilder sql = new StringBuilder("Insert into EvidenceTransfer "
 				+ " (TransferDate, BatchID ,BatchCreationDate ,EvidenceTransferTypeCode ,EvidenceTransferStatusCode ,"

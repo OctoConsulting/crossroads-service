@@ -149,7 +149,7 @@ public class EvidenceTransferController {
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
 				|| !employeeAuth.getTaskList().contains(Constants.CAN_TRANSFER_BATCH)) {
 
-			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
 		}
 
 		boolean auth = custodyAreaService.validateTransferAuth(employeeAuth.getEmployeeId(), custodyAreaId,
@@ -158,7 +158,7 @@ public class EvidenceTransferController {
 			ErrorMessage message = new ErrorMessage();
 			message.setFieldName("transferOut");
 			message.setErrorMessages("Transfer Out is not autherized for this custody area");
-			return new ResponseEntity(message, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
 		}
 
 		int count = batchTransferTrackerService.getTrackerPerEmployeeId(employeeAuth.getEmployeeId());
@@ -166,7 +166,7 @@ public class EvidenceTransferController {
 			ErrorMessage message = new ErrorMessage();
 			message.setFieldName("TransferInProgress");
 			message.setErrorMessages("Another transaction for this employee is in progress");
-			return new ResponseEntity(message, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity<String>(HttpStatus.OK);

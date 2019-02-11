@@ -17,6 +17,7 @@ public class BatchTransferTrackerRepository extends BaseRepository<BatchTransfer
 
 	public BatchTransferTracker createBatchTransferTracker(BatchTransferTracker tracker)
 			throws BaseApplicationException {
+
 		Session session = openSession();
 		session.beginTransaction();
 		Integer seqId = (Integer) session.save(tracker);

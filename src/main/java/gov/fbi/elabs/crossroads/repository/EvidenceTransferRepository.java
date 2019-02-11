@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import gov.fbi.elabs.crossroads.domain.BatchTransferTracker;
 import gov.fbi.elabs.crossroads.exception.BaseApplicationException;
 
 @Repository
@@ -66,7 +65,6 @@ public class EvidenceTransferRepository extends BaseRepository {
 
 	public String setQueryForEvidenceTable(Integer batchID, Integer employeeID, Integer storageAreaID,
 			String storageLocationID, Integer locationID, Integer organizationID, Integer newBatchID) {
-
 		StringBuilder sql = new StringBuilder("Update Evidence" + " set " + " Evidence.EvidenceTransferID = "
 				+ " (select max(EvidenceTransferID) from EvidenceTransfer et where et.BatchID = " + newBatchID + " and "
 				+ " et.FSLabNum = Evidence.FSLabNum and et.EvidenceID = Evidence.EvidenceID and et.EvidenceType = Evidence.EvidenceType and et.FromEmployeeID = "
@@ -88,11 +86,11 @@ public class EvidenceTransferRepository extends BaseRepository {
 		return sql.toString();
 	}
 
-	public void transferEvidence(String evidenceTransferQuery, String evidenceQuery, BatchTransferTracker tracker)
+	public boolean transferEvidence(String evidenceTransferQuery, String evidenceQuery)
 			throws BaseApplicationException {
 		Session session = openSession();
 		session.beginTransaction();
-		BatchTransferTracker track = null;
+		boolean flag = true;
 		try {
 			// track =
 			// batchTransferTrackerRepository.createBatchTransferTracker(tracker);
@@ -100,7 +98,9 @@ public class EvidenceTransferRepository extends BaseRepository {
 			sqlQueryForEvidenceTransfer.executeUpdate();
 			SQLQuery sqlQueryForEvidence = session.createSQLQuery(evidenceQuery);
 			sqlQueryForEvidence.executeUpdate();
+			session.getTransaction().commit();
 		} catch (Exception e) {
+			flag = false;
 			session.getTransaction().rollback();
 			logger.error("Transfer Unsuccessful !! An error occured while transfering the evidence.Exception : "
 					+ e.getMessage());
@@ -112,9 +112,10 @@ public class EvidenceTransferRepository extends BaseRepository {
 		// batchTransferTrackerRepository.updateBatchTransferTracker(track);
 		// }
 		// }
-
-		session.getTransaction().commit();
-		session.close();
+		if (session.isOpen()) {
+			session.close();
+		}
+		return flag;
 	}
 
 }

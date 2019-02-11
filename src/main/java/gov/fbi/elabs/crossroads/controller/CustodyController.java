@@ -63,6 +63,10 @@ public class CustodyController {
 		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
 		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
 
+		// EmployeeAuth auth = (EmployeeAuth)
+		// employeeAuthUtil.session().getAttribute("roles");
+		// System.out.println(auth);
+
 		if (employeeAuth.getEmployeeId() == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)
 				|| !(employeeAuth.getTaskList().containsAll(Constants.TASKS))) {

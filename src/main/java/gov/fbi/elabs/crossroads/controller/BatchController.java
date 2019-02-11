@@ -15,7 +15,6 @@ import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +69,15 @@ public class BatchController {
 			@RequestParam(value = "limit", required = true, defaultValue = "10") Integer limit)
 			throws BaseApplicationException {
 
-		String username = (String) SecurityContextHolder.getContext().getAuthentication().getName();
-		EmployeeAuth employeeAuth = employeeAuthUtil.getEmployeeAuthDetails(username);
+		// String username = (String)
+		// SecurityContextHolder.getContext().getAuthentication().getName();
+		// EmployeeAuth employeeAuth =
+		// employeeAuthUtil.getEmployeeAuthDetails(username);
+
+		EmployeeAuth employeeAuth = null;
+		if (employeeAuthUtil.session() != null) {
+			employeeAuth = (EmployeeAuth) employeeAuthUtil.session().getAttribute("roles");
+		}
 
 		if (employeeAuth.getEmployeeId() == null
 				|| !CollectionUtils.containsAny(employeeAuth.getRoleList(), Constants.ROLES)

@@ -45,7 +45,7 @@ public class EvidenceTransferService {
 
 	Logger logger = LoggerFactory.getLogger(EvidenceTransferService.class);
 
-	public void transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI)
+	public boolean transferEvidence(EmployeeAuth employeeAuth, EvidenceTransferUI evidenceTransferUI)
 			throws BaseApplicationException {
 
 		Integer batchID = evidenceTransferUI.getBatchID();
@@ -65,7 +65,8 @@ public class EvidenceTransferService {
 		logger.info("Batch Id " + newBatchId);
 
 		if (newBatchId == null) {
-			return;
+			logger.info("Error in creating batch id");
+			return false;
 		}
 
 		BatchTransferTracker tracker = new BatchTransferTracker();
@@ -80,8 +81,10 @@ public class EvidenceTransferService {
 		String evidenceQuery = evidenceTransferRepo.setQueryForEvidenceTable(batchID, employeeID, storageAreaID,
 				storageLocationID, locationID, organizationID, newBatchId);
 		BatchTransferTracker track = batchTransferTrackerService.createTracker(tracker);
-		evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery, tracker);
+		boolean status = evidenceTransferRepo.transferEvidence(evidenceTransferQuery, evidenceQuery);
 		batchTransferTrackerService.updateEndTime(track);
+
+		return status;
 	}
 
 	public List<ErrorMessage> validateEvidenceTransfer(Integer batchID, EvidenceTransferUI evidenceTransferUI,

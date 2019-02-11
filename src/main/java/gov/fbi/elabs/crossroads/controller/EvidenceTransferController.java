@@ -86,15 +86,22 @@ public class EvidenceTransferController {
 
 		String userNameForDB = employeeAuth.getUserName();
 
-		evidenceTransferService.transferEvidence(employeeAuth, evidenceTransferUI);
+		boolean status = evidenceTransferService.transferEvidence(employeeAuth, evidenceTransferUI);
 
 		final long endTime = System.currentTimeMillis();
 		long timeInMillis = endTime - startTime;
 
 		String execTime = "Total execution time for transfer: " + (endTime - startTime) + " millis";
+		if (!status) {
+			execTime = execTime.concat(" Wasnt successful to transfer the transaction");
+		}
 		ErrorMessage message = new ErrorMessage();
 		message.setFieldName("executionTime");
 		message.setErrorMessages(execTime);
+
+		if (!status) {
+			return new ResponseEntity(message, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		return new ResponseEntity(message, HttpStatus.OK);
 	}

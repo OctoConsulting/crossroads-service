@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "BatchTransferTracker")
+@Table(name = "BatchTransferTracker", schema = "Custom")
 public class BatchTransferTracker {
 
 	@Id

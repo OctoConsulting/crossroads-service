@@ -3,6 +3,7 @@ package gov.fbi.elabs.crossroads.utilities;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import gov.fbi.elabs.crossroads.domain.Employee;
 import gov.fbi.elabs.crossroads.domain.EmployeeAuth;
@@ -72,6 +75,11 @@ public class EmployeeAuthUtil {
 			return false;
 		}
 		return true;
+	}
+
+	public static HttpSession session() {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		return attr.getRequest().getSession(true); // true == allow create
 	}
 
 }

@@ -48,7 +48,7 @@ public class LoginController {
 			return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
 		}
 
-		session.setAttribute("roles", employeeAuth);
+		// session.setAttribute("roles", employeeAuth);
 
 		User user = new User();
 		user.setSessionId(sessionId);

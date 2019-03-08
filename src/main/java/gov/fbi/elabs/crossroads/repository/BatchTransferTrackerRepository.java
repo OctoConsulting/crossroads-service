@@ -37,8 +37,8 @@ public class BatchTransferTrackerRepository extends BaseRepository<BatchTransfer
 
 	public int getTrackPerEmployeeId(int employeeId) throws BaseApplicationException {
 		StringBuilder builder = new StringBuilder();
-		builder.append(
-				"Select count(*) from BatchTransferTracker where EndTime is null and EmployeeID = " + employeeId);
+		builder.append("Select count(*) from Custom.BatchTransferTracker where EndTime is null and EmployeeID = "
+				+ employeeId);
 		SQLQuery sqlQuery = createSQLQuery(builder.toString());
 		int count = (int) sqlQuery.list().get(0);
 		return count;
